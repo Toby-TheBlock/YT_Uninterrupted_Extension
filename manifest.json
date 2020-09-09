@@ -1,0 +1,38 @@
+{
+  "manifest_version": 2,
+
+  "name": "YouTube uninterrupted",
+  "description": "Ensures that YouTube runs without any interruptions",
+  "version": "1.0",
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+
+  "browser_action": {
+  		"default_popup": "html/main.html",
+    	"default_icon": "assets/icon.png",
+		"default_title": "YouTube uninterrupted"
+  },
+  
+  "permissions": [
+    	"activeTab", "*://*/*",
+    	"tabs", "*://*/*",
+        "storage"
+  ],
+  "background": {
+  		"scripts": ["js/jquery3-2-1.js", "js/background.js"]
+  },
+  "content_scripts": [
+        {
+        "matches": ["https://www.youtube.com/*"],
+        "css": ["css/DOMcontent.css", "css/main.css"],
+        "js": ["js/jquery3-2-1.js", "js/main.js"]
+        }
+    ],
+  "web_accessible_resources": [
+    "assets/*.png",
+    "js/configurationManager.js",
+    "js/skipAds.js",
+    "js/replayButton.js",
+    "js/speedupAutoplay.js",
+    "js/preventAutostop.js"
+  ]
+}
