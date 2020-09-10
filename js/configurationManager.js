@@ -1,5 +1,5 @@
 
-var setupStage = window.setInterval(setupIntervals, 100);
+var setupStage = window.setInterval(setupIntervals, 1000);
 
 // Sets up intervals for all the functions which are needed to support the extentions functionality.
 // Runs only when the current Youtube-page is a video.
@@ -9,7 +9,7 @@ function setupIntervals() {
             //createMutator(detectSkippableAd, ytpVideoAds); YOUTUBE ADS AREN'T APPEARING ?????????????????????????????
 
             // Create a replayButton if isn't allready present on the page.
-            if (document.getElementById("ytu_replay_button") === null) {
+            if (getDOMElement("id", "ytu_replay_button") === null) {
                 createReplayButton();
             }
             // Start the intervals for the prevent-autostop and speed-up-autoplay functionality.
@@ -37,7 +37,7 @@ function checkURLForChange() {
     // IF MULTIPLE TABS ARE OPEN THE LOCALSTORE IS BEING UPDATET FROM TWO PLACES AT ONCE,
     // THIS CAUSES BIG ISSUES SINCE THE URLS ARE COMPETING WITH EACH OTHER!!!!!!!
     try {
-        let currentTabID = document.getElementById("TabID").innerHTML;
+        let currentTabID = getDOMElement("id", "TabID").innerHTML;
         let currentURL = document.URL;
         if (currentURL !== localStorage.getItem("oldURLForTab" + currentTabID)) {
             localStorage.setItem("oldURLForTab" + currentTabID, currentURL);
@@ -48,6 +48,32 @@ function checkURLForChange() {
     } catch(error) {
         return false;
     }
+}
+
+function createDOMElement(elementType, elementattribute, value) {
+    let element = document.createElement("" + elementType + "");
+    elementattribute.forEach(function(currentVal, index) {
+        element.setAttribute(currentVal, value[index]);
+    });
+
+    return element;
+}
+
+function getDOMElement(retrievalMethod, identificator, index = 0) {
+    let object;
+    switch (retrievalMethod) {
+        case "id":
+            object = document.getElementById("" + identificator + "");
+            break;
+        case "class":
+            object = document.getElementsByClassName(identificator)[index];
+            break;
+        case "tag":
+            object = document.getElementsByTagName(identificator)[index];
+            break;
+    }
+
+    return object;
 }
 
 function createMutator(callbackFunction, objectToObserve) {

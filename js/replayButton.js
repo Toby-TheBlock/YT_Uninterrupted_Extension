@@ -3,10 +3,9 @@
 // and insert it to the video-controlbar.
 function createReplayButton() {
 
-    let ytpLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
+    let ytpLeftControls = getDOMElement("class", "ytp-left-controls");
 
-    let replayButton = document.createElement("button");
-    replayButton.id = "ytu_replay_button";
+    let replayButton = createDOMElement("button", ["id"], ["ytu_replay_button"]);
     replayButton.addEventListener("click", setReplayStatus);
 
     if (getLocalStorageValue() === null || getLocalStorageValue() === "false") {
@@ -22,20 +21,20 @@ function createReplayButton() {
     ytpLeftControls.insertBefore(replayButton, ytpLeftControls.childNodes[3]);
 
     window.setInterval(resetReplayButton, 100);
-    window.setInterval(videoplayerFullscreen, 100);
+    window.setInterval(videoplayerFullscreen, 1);
     setLocalStorageValue();
 }
 
 
-// MAYBE CREATE A MUTATOR FOR THIS!!!!!!!!!!!!!!!!!!!!!!!
+
 function videoplayerFullscreen() {
-    let replayButton = document.getElementById("ytu_replay_button");
+    let replayButton = getDOMElement("id", "ytu_replay_button");
     let fullscreenClassAdded = replayButton.classList.contains("ytuFullScreen");
-    let fullscreenModeActive = document.getElementsByClassName("html5-video-player")[0].classList.contains("ytp-big-mode");
+    let fullscreenModeActive = getDOMElement("class", "html5-video-player").classList.contains("ytp-big-mode");
 
     if (fullscreenModeActive && !fullscreenClassAdded) {
         replayButton.classList.add("ytuFullScreen");
-    } else if (!fullscreenModeActive && fullscreenClassAdded) {
+    } else {
         replayButton.classList.remove("ytuFullScreen");
     }
 }
@@ -46,7 +45,7 @@ function videoplayerFullscreen() {
 function resetReplayButton(){
     try {
         if (checkURLForChange()) {
-            if (document.getElementById("ytu_replay_button").classList.contains("ytu_replay_button_on")) {
+            if (getDOMElement("id", "ytu_replay_button").classList.contains("ytu_replay_button_on")) {
                 setReplayStatus();
             }
         } else if (typeof replayIntervalCall === "undefined") {
@@ -64,15 +63,16 @@ var replayIntervalCall
 // Also starts a interval for the replayVideo function if the replay-button is activated,
 // or clears the interval if it's deactivated.
 function setReplayStatus() {
-    let replayButton = document.getElementById("ytu_replay_button").classList;
-    let ytAutoPlayStatus = document.getElementsByClassName("style-scope ytd-compact-autoplay-renderer")[3];
-    let toggleButton = document.getElementById("toggleButton");
+    let replayButton = getDOMElement("id", "ytu_replay_button").classList;
+    let ytAutoPlayStatus = getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3);
+    let toggleButton = getDOMElement("id", "toggleButton");
 
-    if (replayButton.contains("ytu_replay_button_off")) {
+    if (!getReplayBtnStatus()) {
         replayButton.add("ytu_replay_button_on");
         replayButton.remove("ytu_replay_button_off");
         // Check if the AUTOPLAY button is present on the page, since in playlists it isn't.
         if (ytAutoPlayStatus.getAttribute("aria-pressed") == "true" && ytAutoPlayStatus != null) {
+
             document.getElementsByClassName("toggle-container style-scope paper-toggle-button")[0].click();
 
             /*
@@ -90,7 +90,7 @@ function setReplayStatus() {
 
         replayIntervalCall = setInterval(replayVideo, 1);
 
-    } else if (replayButton.contains("ytu_replay_button_on")) {
+    } else if (getReplayBtnStatus()) {
         replayButton.add("ytu_replay_button_off");
         replayButton.remove("ytu_replay_button_on");
 
@@ -110,6 +110,13 @@ function setReplayStatus() {
     }
 
     setLocalStorageValue();
+}
+
+function getReplayBtnStatus() {
+    if (getDOMElement("id", "ytu_replay_button").classList.contains("ytu_replay_button_on")) {
+        return true;
+    }
+    return false;
 }
 
 function getLocalStorageValue() {
@@ -139,8 +146,8 @@ function replayVideo() {
 
     // The following value is youtubes replay-icon value.
     let replayButtonValue = "M 18,11 V 7 l -5,5 5,5 v -4 c 3.3,0 6,2.7 6,6 0,3.3 -2.7,6 -6,6 -3.3,0 -6,-2.7 -6,-6 h -2 c 0,4.4 3.6,8 8,8 4.4,0 8,-3.6 8,-8 0,-4.4 -3.6,-8 -8,-8 z";
-    let ytpPlayButton = document.getElementsByClassName("ytp-play-button")[0];
-    let ytpCancelUpnextButton = document.getElementsByClassName("ytp-upnext-cancel-button")[0];
+    let ytpPlayButton = getDOMElement("class", "ytp-play-button");
+    //let ytpCancelUpnextButton = getDOMElement("class", "ytp-upnext-cancel-button");
 
     if (getLocalStorageValue()) {
         if (ytpPlayButton.childNodes[0].childNodes[1].getAttribute("d") == replayButtonValue) {
@@ -158,7 +165,7 @@ function replayVideo() {
                 
                  */
             } else {
-                ytpCancelUpnextButton.click();
+                //ytpCancelUpnextButton.click();
                 ytpPlayButton.click();
             }
         }
