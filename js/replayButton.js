@@ -8,7 +8,8 @@ function createReplayButton() {
     let replayButton = createDOMElement("button", ["id"], ["ytu_replay_button"]);
     replayButton.addEventListener("click", setReplayStatus);
 
-    if (getLocalStorageValue() === null || getLocalStorageValue() === "false") {
+    let currentStorageValue = getLocalStorageValue(window.location.href);
+    if (currentStorageValue === null || currentStorageValue === "false") {
         replayButton.classList.add("ytu_replay_button_off");
     } else {
         replayButton.classList.add("ytu_replay_button_on");
@@ -22,7 +23,7 @@ function createReplayButton() {
 
     window.setInterval(resetReplayButton, 100);
     window.setInterval(videoplayerFullscreen, 1);
-    setLocalStorageValue();
+    setLocalStorageValue(window.location.href);
 }
 
 
@@ -63,6 +64,9 @@ var replayIntervalCall
 // Also starts a interval for the replayVideo function if the replay-button is activated,
 // or clears the interval if it's deactivated.
 function setReplayStatus() {
+
+    setAutoPlayBtn();
+
     let replayButton = getDOMElement("id", "ytu_replay_button").classList;
     let ytAutoPlayStatus = getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3);
     let toggleButton = getDOMElement("id", "toggleButton");
@@ -70,23 +74,6 @@ function setReplayStatus() {
     if (!getReplayBtnStatus()) {
         replayButton.add("ytu_replay_button_on");
         replayButton.remove("ytu_replay_button_off");
-        // Check if the AUTOPLAY button is present on the page, since in playlists it isn't.
-        if (ytAutoPlayStatus.getAttribute("aria-pressed") == "true" && ytAutoPlayStatus != null) {
-
-            document.getElementsByClassName("toggle-container style-scope paper-toggle-button")[0].click();
-
-            /*
-
-            // Remove the active and checked attributes temporarly, since they prevent the replay button from working
-            // correctly when the tabs is not in focus ("inactive").
-            ytAutoPlayStatus.setAttribute("aria-pressed", false);
-            ytAutoPlayStatus.removeAttribute("active");
-            ytAutoPlayStatus.removeAttribute("checked");
-            // Change the style layout so that it still looks like that AUTOPLAY is enable.
-            toggleButton.style.cssText = "background-color: #3ea6ff !important; position: relative !important; left: 18px !important;";
-
-             */
-        }
 
         replayIntervalCall = setInterval(replayVideo, 1);
 
@@ -94,22 +81,16 @@ function setReplayStatus() {
         replayButton.add("ytu_replay_button_off");
         replayButton.remove("ytu_replay_button_on");
 
-        // TURNS ON AUTOPLAY EVEN IF IT WAS DISABLED IN THE FIRST PLACE!!!!!!!!!!!!!!!!!
-        if (ytAutoPlayStatus.getAttribute("aria-pressed") == "false" && ytAutoPlayStatus != null) {
-            document.getElementsByClassName("toggle-container style-scope paper-toggle-button")[0].click();
-            /*
-            // Revert all changes that have been made to the AUTOPLAY button.
-            ytAutoPlayStatus.setAttribute("aria-pressed", true);
-            ytAutoPlayStatus.active;
-            ytAutoPlayStatus.checked;
-            toggleButton.removeAttribute("style");
-            */
-        }
         // Delete the interval which tries to replay the video.
         clearInterval(replayIntervalCall);
     }
 
-    setLocalStorageValue();
+    // Check if the AUTOPLAY button is present on the page, since in playlists it isn't.
+    if (getLocalStorageValue("autoplayButtonStatus") == "true" && ytAutoPlayStatus != null) {
+        document.getElementsByClassName("toggle-container style-scope paper-toggle-button")[0].click();
+    }
+
+    setLocalStorageValue(window.location.href);
 }
 
 function getReplayBtnStatus() {
@@ -119,21 +100,30 @@ function getReplayBtnStatus() {
     return false;
 }
 
-function getLocalStorageValue() {
-    return localStorage.getItem(window.location.href);
+function setAutoPlayBtn() {
+    let autoplayButton = getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3);
+    let currentValue = (autoplayButton.getAttribute("aria-pressed") == "true") ? "true" : "false";
+    if (getLocalStorageValue("autoplayButtonStatus") != currentValue && !getReplayBtnStatus()) {
+        setLocalStorageValue("autoplayButtonStatus", currentValue);
+    }
+
 }
 
-function setLocalStorageValue() {
-    let localData = getLocalStorageValue();
+function getLocalStorageValue(storageIndex) {
+    return localStorage.getItem(storageIndex);
+}
+
+function setLocalStorageValue(storageIndex, value="false") {
+    let localData = getLocalStorageValue(storageIndex);
     switch (localData) {
         case null:
-            localStorage.setItem(window.location.href, "false");
+            localStorage.setItem(storageIndex, value);
             break;
         case "true":
-            localStorage.setItem(window.location.href, "false");
+            localStorage.setItem(storageIndex, "false");
             break;
         case "false":
-            localStorage.setItem(window.location.href, "true");
+            localStorage.setItem(storageIndex, "true");
             break;
     }
 }
@@ -149,11 +139,11 @@ function replayVideo() {
     let ytpPlayButton = getDOMElement("class", "ytp-play-button");
     //let ytpCancelUpnextButton = getDOMElement("class", "ytp-upnext-cancel-button");
 
-    if (getLocalStorageValue()) {
+    if (getLocalStorageValue(window.location.href)) {
         if (ytpPlayButton.childNodes[0].childNodes[1].getAttribute("d") == replayButtonValue) {
             // If there is no AUTOPLAY button reload the current page in order or replay the video,
             // otherwise first click the "cancel-up-next"-button and then the replay-button.
-            if (document.getElementById("toggleButton") === null) {
+            if (getDOMElement("id", "toggleButton") === null) {
                 /*
                 let prevButton = document.getElementsByClassName("ytp-prev-button ytp-button")[0];
                 prevButton.href = "" + window.location.href + "";
