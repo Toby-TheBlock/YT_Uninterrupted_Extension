@@ -12,6 +12,8 @@ function preventAutostop() {
     } else if (document.getElementById("confirm-button") !== null) {
         document.getElementsByClassName("yt-simple-endpoint style-scope yt-button-renderer")[1].click();
         document.getElementsByTagName("paper-dialog")[0].remove();
-        location.reload();
+        setTimeout(function() {
+            location.reload();
+        }, 1000);
     }
 }

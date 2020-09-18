@@ -34,12 +34,13 @@ function checkURLForVideo() {
 // @return true if the oldURL and the currentURL are different, else false.
 function checkURLForChange() {
 
-    // IF MULTIPLE TABS ARE OPEN THE LOCALSTORE IS BEING UPDATET FROM TWO PLACES AT ONCE,
-    // THIS CAUSES BIG ISSUES SINCE THE URLS ARE COMPETING WITH EACH OTHER!!!!!!!
     try {
         let currentTabID = getDOMElement("id", "TabID").innerHTML;
-        let currentURL = document.URL;
-        if (currentURL !== localStorage.getItem("oldURLForTab" + currentTabID)) {
+        let currentURL = getVideoURL();
+        let oldURL = getLocalStorageValue("oldURLForTab" + currentTabID)
+        if (currentURL !== oldURL) {
+            console.log("fgafafw")
+            deleteLocalStorage(oldURL);
             localStorage.setItem("oldURLForTab" + currentTabID, currentURL);
             return true;
         } else {
@@ -48,6 +49,11 @@ function checkURLForChange() {
     } catch(error) {
         return false;
     }
+}
+
+// The split("index") removes extra URL query-parameters which cause trouble in playlists.
+function getVideoURL() {
+    return window.location.href.split("index")[0];
 }
 
 function createDOMElement(elementType, elementattribute, value) {
@@ -75,6 +81,36 @@ function getDOMElement(retrievalMethod, identificator, index = 0) {
 
     return object;
 }
+
+function deleteLocalStorage(storageIndex) {
+    try {
+        console.log("test")
+        localStorage.removeItem(storageIndex);
+    } catch (e) {
+        console.log("LocalStorage not found")// Nothing needs to be caught, the localStorage in question just doesn't exist.
+    }
+}
+
+function getLocalStorageValue(storageIndex) {
+    return localStorage.getItem(storageIndex);
+}
+
+
+function setLocalStorageValue(storageIndex, value) {
+    let localData = getLocalStorageValue(storageIndex);
+    switch (localData) {
+        case null:
+            localStorage.setItem(storageIndex, value);
+            break;
+        case "true":
+            localStorage.setItem(storageIndex, "false");
+            break;
+        case "false":
+            localStorage.setItem(storageIndex, "true");
+            break;
+    }
+}
+
 
 function createMutator(callbackFunction, objectToObserve) {
     new MutationObserver(callbackFunction).observe(objectToObserve, {attributes: true,});
