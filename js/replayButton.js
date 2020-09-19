@@ -1,12 +1,11 @@
 
-// Start an interval that tries to replay the video.
+// Variable to store the replayVideo() function interval.
 var replayInterval
 
 // Create a button element, which acts like a replay-button,
-// and insert it to the video-controlbar.
+// and insert it to the video-controlbar. Also calls all necessary
+// functions which make the replay-button work as intended.
 function createReplayButton() {
-
-    let ytpLeftControls = getDOMElement("class", "ytp-left-controls");
 
     let replayButton = createDOMElement("button", ["id"], ["ytu_replay_button"]);
     replayButton.addEventListener("click", setReplayStatus);
@@ -20,30 +19,31 @@ function createReplayButton() {
 
     let replayButtonIcon = document.createTextNode("↻");
     replayButtonIcon.id = "ytu_replay_button_icon";
-
     replayButton.appendChild(replayButtonIcon);
+
+    let ytpLeftControls = getDOMElement("class", "ytp-left-controls");
     ytpLeftControls.insertBefore(replayButton, ytpLeftControls.childNodes[3]);
 
     window.setInterval(resetReplayButton, 1000);
-    window.setInterval(videoplayerFullscreen, 10);
+    window.setInterval(videoplayerFullscreen, 1);
 }
 
 
-
+// Checks if the current video is in fullscreen mode or not,
+// and moves the replay-button-icon into the correct position.
 function videoplayerFullscreen() {
     let replayButton = getDOMElement("id", "ytu_replay_button");
-    let fullscreenClassAdded = replayButton.classList.contains("ytuFullScreen");
     let fullscreenModeActive = getDOMElement("class", "html5-video-player").classList.contains("ytp-big-mode");
 
-    if (fullscreenModeActive && !fullscreenClassAdded) {
+    if (fullscreenModeActive && !replayButton.classList.contains("ytuFullScreen")) {
         replayButton.classList.add("ytuFullScreen");
-    } else {
+    } else if (!fullscreenModeActive){
         replayButton.classList.remove("ytuFullScreen");
     }
 }
 
-// Reset replay-button status on URL change.
-// This ensures that the replay-button isn't still active on manual video change.
+// Reset replay-button status on URL change. This ensures that
+// the replay-button isn't still active on video change.
 function resetReplayButton(){
     try {
         if (checkURLForChange()) {
@@ -51,6 +51,8 @@ function resetReplayButton(){
                 setReplayStatus();
             }
         } else {
+            // Start the replayVideo interval again after the current
+            // video page has been reloaded, if the replay-button is actived.
             if (typeof replayInterval === "undefined" && getReplayBtnStatus()) {
                 replayInterval = setInterval(replayVideo, 1);
             }
@@ -60,9 +62,9 @@ function resetReplayButton(){
     }
 }
 
-// Set replay-button status to "on" or "off".
-// Also starts a interval for the replayVideo function if the replay-button is activated,
-// or clears the interval if it's deactivated.
+// Set replay-button status to "on" or "off". Also starts a
+// interval for the replayVideo function if the replay-button
+// is activated, or clears the interval if it's deactivated.
 function setReplayStatus() {
 
     setAutoPlayBtnLS();
@@ -85,10 +87,13 @@ function setReplayStatus() {
         // Delete the interval which tries to replay the video.
         clearInterval(replayInterval);
     }
+
     toggleAutoPlayBtn();
 }
 
 
+// Checks if the YouTube autoplay-button is activated or not.
+// @return true if the autoplay-button is activated, and false if it is not.
 function getReplayBtnStatus() {
     if (getDOMElement("id", "ytu_replay_button").classList.contains("ytu_replay_button_on")) {
         return true;
@@ -97,6 +102,8 @@ function getReplayBtnStatus() {
 }
 
 
+// Stores the current autoplay-button status (on/off) in a localStorage.
+// Will only set the status if the autoplay-button is present on the current page.
 function setAutoPlayBtnLS() {
     let autoplayButton = getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3);
     if (autoplayButton != null) {
@@ -108,6 +115,7 @@ function setAutoPlayBtnLS() {
 }
 
 
+// Automatically clicks the autoplay-button based on value stored in the localStorage.
 function toggleAutoPlayBtn() {
     let autoPlayBtn = getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3);
     // Check if the AUTOPLAY button is present on the page, since in playlists it isn't.
@@ -116,10 +124,7 @@ function toggleAutoPlayBtn() {
     }
 }
 
-// Checks if the current video has finished and can be restarted.
-// Also restarts the video if that is possible.
-// NOTE THIS FUNCTION DOESN'T MANAGE TO RESTART A VIDEO IF IT'S IN A PLAYLIST!!!!! NEEDS TO BE LOOKED AT,
-// ONE SOLUTION COULD BE TO JUST RETURN TO THE LAST URL (VIDEO).
+// Checks if the current video has finished and restarts it if possible.
 function replayVideo() {
 
     // The following value is youtubes replay-icon value.
@@ -129,24 +134,12 @@ function replayVideo() {
 
     if (getLocalStorageValue(getVideoURL()) == "true") {
         if (ytpPlayButton.childNodes[0].childNodes[1].getAttribute("d") == replayButtonValue) {
-            // If there is no AUTOPLAY button reload the current page in order or replay the video,
-            // otherwise first click the "cancel-up-next"-button and then the replay-button.
-            console.log(getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3))
+            // If there is no autoplay-button on the page, reload it in order to replay the video.
+            // This needs to be done because we are in a playlist, and here the normal replay-button
+            // doesn't work correctly.
             if (ytpAutoPlayBtn == null || typeof ytpAutoPlayBtn == "undefined") {
                 location.reload();
-                /*
-                let prevButton = document.getElementsByClassName("ytp-prev-button ytp-button")[0];
-                prevButton.href = "" + window.location.href + "";
-                setTimeout(function (){
-                    prevButton.click();
-                },10);
-                //document.getElementsByClassName("ytp-prev-button ytp-button")[0].click();
-                //
-                
-                 */
             } else {
-                //ytpCancelUpnextButton.click();
-                console.log("test2");
                 ytpPlayButton.click();
             }
         }

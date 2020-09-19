@@ -3,6 +3,7 @@ window.setInterval(injectJSFile, 1);
 var bgCommunication = window.setInterval(listenToBackground, 1);
 var jsFiles = ["configurationManager", "preventAutostop", "speedupAutoplay", "replayButton", "skipAds"];
 var tabID = "";
+var failedSetupAttempts = 0;
 
 function listenToBackground() {
     try {
@@ -47,9 +48,20 @@ function injectJSFile() {
             });
         }
     } catch (error) {
-        console.log("Something went wrong:" + error);
+        if (failedSetupAttempts > 100) {
+            chrome.runtime.sendMessage('', {
+                type: 'notification',
+                options: {
+                    title: 'Something went wrong! X_X',
+                    message: 'YouTube uninterrupted couldn\'t initialize correctly.\nTry reloading the page.',
+                    iconUrl: '',
+                    type: 'basic'
+                }
+            });
+        } else {
+            failedSetupAttempts++;
+        }
     }
-
 }
 
 

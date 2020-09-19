@@ -39,7 +39,6 @@ function checkURLForChange() {
         let currentURL = getVideoURL();
         let oldURL = getLocalStorageValue("oldURLForTab" + currentTabID)
         if (currentURL !== oldURL) {
-            console.log("fgafafw")
             deleteLocalStorage(oldURL);
             localStorage.setItem("oldURLForTab" + currentTabID, currentURL);
             return true;
@@ -84,7 +83,6 @@ function getDOMElement(retrievalMethod, identificator, index = 0) {
 
 function deleteLocalStorage(storageIndex) {
     try {
-        console.log("test")
         localStorage.removeItem(storageIndex);
     } catch (e) {
         console.log("LocalStorage not found")// Nothing needs to be caught, the localStorage in question just doesn't exist.
@@ -112,6 +110,3 @@ function setLocalStorageValue(storageIndex, value) {
 }
 
 
-function createMutator(callbackFunction, objectToObserve) {
-    new MutationObserver(callbackFunction).observe(objectToObserve, {attributes: true,});
-}
