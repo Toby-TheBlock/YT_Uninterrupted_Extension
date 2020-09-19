@@ -1,16 +1,13 @@
 
+setUpDB();
 window.setInterval(injectJSFile, 1);
-var bgCommunication = window.setInterval(listenToBackground, 1);
-var jsFiles = ["configurationManager", "preventAutostop", "speedupAutoplay", "replayButton", "skipAds"];
+
+var settingUpTabID = window.setInterval(setTabID, 1);
 var tabID = "";
-var failedSetupAttempts = 0;
 
-function listenToBackground() {
+
+function setTabID() {
     try {
-        chrome.runtime.onMessage.addListener(function (request) {
-            tabID = request.urlChange;
-        });
-
         if (tabID !== "") {
             if (document.getElementById("TabID") === null) {
                 let scriptTag = document.createElement("script");
@@ -23,13 +20,26 @@ function listenToBackground() {
                     localStorage.setItem("oldURLForTab" + tabID, "noPreviousURL");
                 }
             } else {
-                clearInterval(bgCommunication);
+                clearInterval(settingUpTabID);
             }
+        } else {
+            listenToBackground();
         }
     } catch (e) {
         // Nothing needs to be caught, the element in question is "null" because the page hasn't loaded it jet.
     }
 }
+
+
+function listenToBackground() {
+    chrome.runtime.onMessage.addListener(function (request) {
+        tabID = request.urlChange;
+    });
+}
+
+
+var jsFiles = ["mainDOM", "preventAutostop", "speedupAutoplay", "replayButton", "skipAds"];
+var failedSetupAttempts = 0;
 
 
 function injectJSFile() {

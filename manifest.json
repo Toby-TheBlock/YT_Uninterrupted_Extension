@@ -24,15 +24,11 @@
         {
         "matches": ["https://www.youtube.com/*"],
         "css": ["css/DOMcontent.css", "css/main.css"],
-        "js": ["js/jquery3-2-1.js", "js/main.js"]
+        "js": ["js/jquery3-2-1.js", "js/mainCS.js"]
         }
     ],
   "web_accessible_resources": [
     "assets/*.png",
-    "js/configurationManager.js",
-    "js/skipAds.js",
-    "js/replayButton.js",
-    "js/speedupAutoplay.js",
-    "js/preventAutostop.js"
+    "js/*.js"
   ]
 }
