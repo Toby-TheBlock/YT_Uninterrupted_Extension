@@ -93,7 +93,3 @@ function checkURLForChange() {
 function checkURLForVideo() {
     return document.URL.includes("https://www.youtube.com/watch");
 }
-
-
-
-

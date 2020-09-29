@@ -15,6 +15,7 @@ function setupIntervals() {
             // Start the intervals for the prevent-autostop and speed-up-autoplay functionality.
             window.setInterval(playNextVideo, 100);
             window.setInterval(preventAutostop, 100);
+            window.setInterval(skipAd, 100);
             //createMutator(detectUpNextButton, document.getElementsByClassName("ytp-upnext ytp-player-content")[0]);
 
             // End the setupStage by clearing the interval.

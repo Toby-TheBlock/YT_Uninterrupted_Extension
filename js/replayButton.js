@@ -119,10 +119,17 @@ function setAutoPlayBtnLS() {
 function toggleAutoPlayBtn() {
     let autoPlayBtn = getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3);
     // Check if the AUTOPLAY button is present on the page, since in playlists it isn't.
-    if (getLocalStorageValue("autoplayButtonStatus") == "true" && autoPlayBtn != null) {
-        getDOMElement("class", "toggle-container style-scope paper-toggle-button").click();
+    let currentlyInPlaylist = window.location.href.includes("&index=");
+    // Try to set the autoplay-button if needed, if something goes wrong try again.
+    try {
+        if (getLocalStorageValue("autoplayButtonStatus") == "true" && (!currentlyInPlaylist || autoPlayBtn != null)) {
+            getDOMElement("class", "toggle-container style-scope paper-toggle-button").click();
+        }
+    } catch (e) {
+        toggleAutoPlayBtn();
     }
 }
+
 
 // Checks if the current video has finished and restarts it if possible.
 function replayVideo() {

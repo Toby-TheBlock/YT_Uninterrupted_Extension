@@ -13,12 +13,18 @@ function detectSkippableAd(mutations) {
 }
 
 function skipAd() {
+
+
+
+    let test = getDOMElement("class", "ytp-ad-image-overlay");
+    let test2 = getDOMElement("class", "ytp-ad-skip-button ytp-button");
+
     // Check if the ad is a banner or a skippable video, and act accordingly.
-    if ($(".ytp-ad-image-overlay")[0]){
+    if (test != null || typeof test != "undefined"){
         document.getElementsByClassName('ytp-ad-overlay-close-button')[0].click();
         console.log('Ad Banner closed!');
-    } else if ($(".ytp-ad-skip-button")[0]) {
-        document.getElementsByClassName('ytp-ad-skip-button')[0].click();
+    } else if (test2 != null || typeof test2 != "undefined") {
+        document.getElementsByClassName('ytp-ad-skip-button ytp-button')[0].click();
         console.log('Full video add skipped!');
     }
 }
