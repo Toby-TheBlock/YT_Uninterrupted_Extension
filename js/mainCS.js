@@ -38,7 +38,7 @@ function listenToBackground() {
 }
 
 
-var jsFiles = ["mainDOM", "preventAutostop", "speedupAutoplay", "replayButton", "skipAds"];
+let jsFiles = ["mainDOM", "preventAutostop", "speedupAutoplay", "replayButton", "skipAds"];
 var failedSetupAttempts = 0;
 
 

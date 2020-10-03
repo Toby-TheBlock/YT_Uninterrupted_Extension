@@ -6,8 +6,6 @@ var setupStage = window.setInterval(setupIntervals, 1000);
 function setupIntervals() {
     if (checkURLForVideo()) {
         try {
-            //createMutator(detectSkippableAd, ytpVideoAds); YOUTUBE ADS AREN'T APPEARING ?????????????????????????????
-
             // Create a replayButton if isn't allready present on the page.
             if (getDOMElement("id", "ytu_replay_button") === null) {
                 createReplayButton();
@@ -16,7 +14,6 @@ function setupIntervals() {
             window.setInterval(playNextVideo, 100);
             window.setInterval(preventAutostop, 100);
             window.setInterval(skipAd, 100);
-            //createMutator(detectUpNextButton, document.getElementsByClassName("ytp-upnext ytp-player-content")[0]);
 
             // End the setupStage by clearing the interval.
             clearInterval(setupStage);
@@ -34,7 +31,6 @@ function checkURLForVideo() {
 // Checks if the current page URL is different from the last time this function was called.
 // @return true if the oldURL and the currentURL are different, else false.
 function checkURLForChange() {
-
     try {
         let currentTabID = getDOMElement("id", "TabID").innerHTML;
         let currentURL = getVideoURL();
@@ -46,7 +42,7 @@ function checkURLForChange() {
         } else {
             return false;
         }
-    } catch(error) {
+    } catch(e) {
         return false;
     }
 }
@@ -86,7 +82,7 @@ function deleteLocalStorage(storageIndex) {
     try {
         localStorage.removeItem(storageIndex);
     } catch (e) {
-        console.log("LocalStorage not found")// Nothing needs to be caught, the localStorage in question just doesn't exist.
+       // Nothing needs to be caught, the localStorage in question just doesn't exist.
     }
 }
 

@@ -1,7 +1,4 @@
 
-// Variable to store the replayVideo() function interval.
-var replayInterval
-
 // Create a button element, which acts like a replay-button,
 // and insert it to the video-controlbar. Also calls all necessary
 // functions which make the replay-button work as intended.
@@ -15,6 +12,7 @@ function createReplayButton() {
         replayButton.classList.add("ytu_replay_button_off");
     } else {
         replayButton.classList.add("ytu_replay_button_on");
+        clickYTContextMenu();
     }
 
     let replayButtonIcon = document.createTextNode("↻");
@@ -46,16 +44,8 @@ function videoplayerFullscreen() {
 // the replay-button isn't still active on video change.
 function resetReplayButton(){
     try {
-        if (checkURLForChange()) {
-            if (getReplayBtnStatus()) {
-                setReplayStatus();
-            }
-        } else {
-            // Start the replayVideo interval again after the current
-            // video page has been reloaded, if the replay-button is actived.
-            if (typeof replayInterval === "undefined" && getReplayBtnStatus()) {
-                replayInterval = setInterval(replayVideo, 1);
-            }
+        if (checkURLForChange() && getReplayBtnStatus()) {
+            setReplayStatus();
         }
     } catch (e) {
         // Nothing needs to be caught, the element in question is "null" because the page hasn't loaded it jet.
@@ -66,9 +56,6 @@ function resetReplayButton(){
 // interval for the replayVideo function if the replay-button
 // is activated, or clears the interval if it's deactivated.
 function setReplayStatus() {
-
-    setAutoPlayBtnLS();
-
     let replayButton = getDOMElement("id", "ytu_replay_button").classList;
     let toggleButton = getDOMElement("id", "toggleButton");
 
@@ -77,18 +64,13 @@ function setReplayStatus() {
         replayButton.remove("ytu_replay_button_off");
         setLocalStorageValue(getVideoURL(), "true");
 
-        replayInterval = setInterval(replayVideo, 1);
-
     } else if (getReplayBtnStatus()) {
         replayButton.add("ytu_replay_button_off");
         replayButton.remove("ytu_replay_button_on");
         setLocalStorageValue(getVideoURL(), "false");
-
-        // Delete the interval which tries to replay the video.
-        clearInterval(replayInterval);
     }
 
-    toggleAutoPlayBtn();
+    clickYTContextMenu();
 }
 
 
@@ -98,58 +80,40 @@ function getReplayBtnStatus() {
     if (getDOMElement("id", "ytu_replay_button").classList.contains("ytu_replay_button_on")) {
         return true;
     }
+
     return false;
 }
 
 
-// Stores the current autoplay-button status (on/off) in a localStorage.
-// Will only set the status if the autoplay-button is present on the current page.
-function setAutoPlayBtnLS() {
-    let autoplayButton = getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3);
-    if (autoplayButton != null) {
-        let currentValue = (autoplayButton.getAttribute("aria-pressed") == "true") ? "true" : "false";
-        if (getLocalStorageValue("autoplayButtonStatus") != currentValue && !getReplayBtnStatus()) {
-            setLocalStorageValue("autoplayButtonStatus", currentValue);
-        }
+async function clickYTContextMenu() {
+    let fullScreenAd = getDOMElement("class", "ytp-ad-preview-container");
+
+    if (fullScreenAd != null || typeof fullScreenAd != "undefined") {
+        console.log("Test")
+        await waitForFullscreenAd();
     }
-}
 
+    for (i = 0; i < 10; i++) {
+        try {
+            getDOMElement("class", "video-stream").dispatchEvent(new MouseEvent("contextmenu", {
+                bubbles: true,
+                cancelable: false,
+                view: window,
+                button: 2,
+                buttons: 0,
+            }));
 
-// Automatically clicks the autoplay-button based on value stored in the localStorage.
-function toggleAutoPlayBtn() {
-    let autoPlayBtn = getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3);
-    // Check if the AUTOPLAY button is present on the page, since in playlists it isn't.
-    let currentlyInPlaylist = window.location.href.includes("&index=");
-    // Try to set the autoplay-button if needed, if something goes wrong try again.
-    try {
-        if (getLocalStorageValue("autoplayButtonStatus") == "true" && (!currentlyInPlaylist || autoPlayBtn != null)) {
-            getDOMElement("class", "toggle-container style-scope paper-toggle-button").click();
-        }
-    } catch (e) {
-        toggleAutoPlayBtn();
-    }
-}
+            let contextMenuReplayBtn = getDOMElement("class", "ytp-menuitem")
+            let previousStatus = contextMenuReplayBtn.getAttribute("aria-checked");
+            document.querySelectorAll('[role="menuitemcheckbox"]')[0].click();
 
-
-// Checks if the current video has finished and restarts it if possible.
-function replayVideo() {
-
-    // The following value is youtubes replay-icon value.
-    let replayButtonValue = "M 18,11 V 7 l -5,5 5,5 v -4 c 3.3,0 6,2.7 6,6 0,3.3 -2.7,6 -6,6 -3.3,0 -6,-2.7 -6,-6 h -2 c 0,4.4 3.6,8 8,8 4.4,0 8,-3.6 8,-8 0,-4.4 -3.6,-8 -8,-8 z";
-    let ytpPlayButton = getDOMElement("class", "ytp-play-button");
-    let ytpAutoPlayBtn = getDOMElement("class", "style-scope ytd-compact-autoplay-renderer", 3);
-
-    if (getLocalStorageValue(getVideoURL()) == "true") {
-        if (ytpPlayButton.childNodes[0].childNodes[1].getAttribute("d") == replayButtonValue) {
-            // If there is no autoplay-button on the page, reload it in order to replay the video.
-            // This needs to be done because we are in a playlist, and here the normal replay-button
-            // doesn't work correctly.
-            if (ytpAutoPlayBtn == null || typeof ytpAutoPlayBtn == "undefined") {
-                location.reload();
-            } else {
-                ytpPlayButton.click();
+            if (contextMenuReplayBtn.getAttribute("aria-checked") != previousStatus) {
+                console.log("works");
+                return;
             }
+        } catch (e) {
+            // context menu couldn't be opened, trying again.
         }
     }
+    console.log("context menu couldn't be opened even after 10 tries!");
 }
-

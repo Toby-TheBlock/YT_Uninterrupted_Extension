@@ -1,30 +1,28 @@
 
-// Object to be observed.
-var ytpVideoAds = document.getElementsByClassName('video-ads')[0];
-
-function detectSkippableAd(mutations) {
-    for (let mutation of mutations) {
-        // Ensure that the observed object has made changes to its childList.
-        // If an ad has been added to the childList run the skipAd function.
-        if (mutation.type === "childList") {
-            skipAd();
-        }
-    }
-}
-
 function skipAd() {
-
-
-
-    let test = getDOMElement("class", "ytp-ad-image-overlay");
-    let test2 = getDOMElement("class", "ytp-ad-skip-button ytp-button");
+    let adBanner = getDOMElement("class", "ytp-ad-image-overlay");
+    let fullScreenAd = getDOMElement("class", "ytp-ad-skip-button ytp-button");
 
     // Check if the ad is a banner or a skippable video, and act accordingly.
-    if (test != null || typeof test != "undefined"){
+    if (adBanner != null || typeof adBanner != "undefined"){
         document.getElementsByClassName('ytp-ad-overlay-close-button')[0].click();
         console.log('Ad Banner closed!');
-    } else if (test2 != null || typeof test2 != "undefined") {
+    } else if (fullScreenAd != null || typeof fullScreenAd != "undefined") {
         document.getElementsByClassName('ytp-ad-skip-button ytp-button')[0].click();
         console.log('Full video add skipped!');
     }
+}
+
+function waitForFullscreenAd() {
+    return new Promise(
+        function(resolve) {
+            let rawTime = getDOMElement("class", "ytp-time-duration").innerHTML.split(":");
+            let timeToWait = parseInt(rawTime[0])*60000 + parseInt(rawTime[1])*1000 + 1000
+
+            setTimeout(function (){
+                console.log("trying now!")
+                resolve();
+            },timeToWait);
+        }
+    );
 }
