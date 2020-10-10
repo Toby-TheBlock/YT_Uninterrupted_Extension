@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/mainPOP.css">
     <title> YouTube Uninterrupted</title>
 </head>
 <body class="container">
@@ -19,7 +19,7 @@
             <td>
                 <label class="switch">
                     <input type="checkbox">
-                    <span class="slider"></span>
+                    <span class="slider" id="replayButton" aria-checked="true"></span>
                 </label>
             </td>
         </tr>
@@ -30,7 +30,7 @@
             <td>
                 <label class="switch">
                     <input type="checkbox">
-                    <span class="slider"></span>
+                    <span class="slider" id="skipAd" aria-checked="true"></span>
                 </label>
             </td>
         </tr>
@@ -41,7 +41,7 @@
             <td>
                 <label class="switch">
                     <input type="checkbox">
-                    <span class="slider"></span>
+                    <span class="slider" id="speedupAutoplay" aria-checked="true"></span>
                 </label>
             </td>
         </tr>
@@ -52,11 +52,14 @@
             <td>
                 <label class="switch">
                     <input type="checkbox">
-                    <span class="slider"></span>
+                    <span class="slider" id="preventAutoplay" aria-checked="true"></span>
                 </label>
             </td>
         </tr>
     </table>
-
 </body>
+
+<script src="../js/dbManagement.js"></script>
+<script src="../js/mainPOP.js"></script>
+
 </html>

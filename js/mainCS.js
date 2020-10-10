@@ -1,5 +1,4 @@
 
-setUpDB();
 window.setInterval(injectJSFile, 1);
 
 var settingUpTabID = window.setInterval(setTabID, 1);
@@ -38,14 +37,10 @@ function listenToBackground() {
 }
 
 
-let jsFiles = ["mainDOM", "preventAutostop", "speedupAutoplay", "replayButton", "skipAds"];
-var failedSetupAttempts = 0;
-
-
 function injectJSFile() {
     try {
         if (checkURLForChange() && checkURLForVideo()) {
-            jsFiles.forEach(function(currentValue) {
+            getFunctionalityList().forEach(function(currentValue) {
                 $('script').each(function () {
                     if (this.src.includes(currentValue)) {
                         this.parentNode.removeChild(this);
@@ -58,22 +53,22 @@ function injectJSFile() {
             });
         }
     } catch (error) {
-        if (failedSetupAttempts > 100) {
-            chrome.runtime.sendMessage('', {
-                type: 'notification',
-                options: {
-                    title: 'Something went wrong! X_X',
-                    message: 'YouTube uninterrupted couldn\'t initialize correctly.\nTry reloading the page.',
-                    iconUrl: '',
-                    type: 'basic'
-                }
-            });
-        } else {
-            failedSetupAttempts++;
-        }
+
     }
 }
 
+
+function getFunctionalityList() {
+
+    let possibleOptioins = ["mainDOM", "preventAutostop", "speedupAutoplay", "replayButton", "skipAds"];
+    let activeFunctionality = [];
+
+    possibleOptioins.forEach(function(){
+
+    });
+
+    return activeFunctionality;
+}
 
 // Checks if the current page URL is different from the last time this function was called.
 // @return true if the oldURL and the currentURL are different, else false.

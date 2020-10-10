@@ -23,8 +23,8 @@
   "content_scripts": [
         {
         "matches": ["https://www.youtube.com/*"],
-        "css": ["css/DOMcontent.css", "css/main.css"],
-        "js": ["js/jquery3-2-1.js", "js/databaseManagement.js", "js/mainCS.js"]
+        "css": ["css/DOMcontent.css"],
+        "js": ["js/jquery3-2-1.js", "js/dbManagement.js", "js/mainCS.js"]
         }
     ],
   "web_accessible_resources": [
