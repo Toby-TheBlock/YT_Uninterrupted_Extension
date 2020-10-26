@@ -8,3 +8,5 @@ chrome.runtime.onMessage.addListener(data => {
         chrome.notifications.create('', data.options);
     }
 });
+
+sendToDB("replayButton", "true")

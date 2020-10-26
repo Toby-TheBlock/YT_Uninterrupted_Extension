@@ -17,7 +17,17 @@ function preventAutostop() {
         // The execution delay ensures that YouTube has registered the closing of the
         // autostop dialogbox before the page is being reloaded.
         setTimeout(function() {
+            localStorage.setItem("oldURLForTab" + tabID, "noPreviousURL");
             location.reload();
-        }, 1000);
+        }, 100);
+    }
+}
+
+
+function preventLoginPopup() {
+    let noThxBtn = getDOMElement("class", "style-scope yt-button-renderer style-text size-small");
+
+    if (typeof noThxBtn !== "undefined" || noThxBtn !== null) {
+        noThxBtn.click();
     }
 }

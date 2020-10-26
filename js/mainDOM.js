@@ -1,19 +1,25 @@
 
 var setupStage = window.setInterval(setupIntervals, 1000);
+var intervalFunctions = [resetReplayButton, playNextVideo, preventAutostop, skipAd];
+var activeIntervals = [];
 
 // Sets up intervals for all the functions which are needed to support the extentions functionality.
 // Runs only when the current Youtube-page is a video.
 function setupIntervals() {
     if (checkURLForVideo()) {
         try {
+            checkIfAutoplayHasBeenStopped();
+
             // Create a replayButton if isn't allready present on the page.
-            if (getDOMElement("id", "ytu_replay_button") === null) {
+            if (getDOMElement("id", "ytuReplayButton") === null) {
                 createReplayButton();
             }
+
             // Start the intervals for the prevent-autostop and speed-up-autoplay functionality.
-            window.setInterval(playNextVideo, 100);
-            window.setInterval(preventAutostop, 100);
-            window.setInterval(skipAd, 100);
+            manageIntervals(true);
+
+
+            //if (getDOMElement("class", "style-scope ytd-button-renderer style-suggestive size-small").getAttribute("aria-label") === "")
 
             // End the setupStage by clearing the interval.
             clearInterval(setupStage);
@@ -22,10 +28,32 @@ function setupIntervals() {
         }
     }
 }
+
+// Sets up intervals for all of the continues extensions functions, or stops them.
+// @para1 boolean that decides if the intervals are to be setup or stopped.
+function manageIntervals(status) {
+    if (status) {
+        intervalFunctions.forEach(function(currentEntry) {
+            activeIntervals.push(window.setInterval(currentEntry, 100))
+        })
+    } else {
+        activeIntervals.forEach(function(currentEntry) {
+            clearInterval(currentEntry);
+        })
+    }
+}
+
 // Checks if the current YouTube-page is a video.
 // @return true if current page is a video, else false.
 function checkURLForVideo() {
     return document.URL.includes("https://www.youtube.com/watch");
+}
+
+function checkIfAutoplayHasBeenStopped() {
+    if (localStorage.getItem("reloadAfterAutostop") === "true") {
+        localStorage.setItem("reloadAfterAutostop", "false");
+        getDOMElement("class", "ytp-next-button ytp-button").click();
+    }
 }
 
 // Checks if the current page URL is different from the last time this function was called.

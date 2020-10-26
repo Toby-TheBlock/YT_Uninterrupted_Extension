@@ -14,9 +14,10 @@ function writeToDB(id, state) {
 
                 let transaction = event.target.transaction.objectStore("FunctionalityStatus");
                 transaction.add({id: "replayButton", activated: "true"});
-                transaction.add({id: "skipAd", activated: "true"});
+                transaction.add({id: "skipAds", activated: "true"});
                 transaction.add({id: "speedupAutoplay", activated: "true"});
-                transaction.add({id: "preventAutoplay", activated: "true"});
+                transaction.add({id: "preventAutostop", activated: "true"});
+                transaction.add({id: "mainDOM", activated: "true"});
             }
 
             request.onerror = function() {
@@ -54,3 +55,5 @@ function getFromDB(id) {
 async function sendToDB(id, state) {
     await writeToDB(id, state);
 }
+
+sendToDB("replayButton", "true")

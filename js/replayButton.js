@@ -4,40 +4,44 @@
 // functions which make the replay-button work as intended.
 function createReplayButton() {
 
-    let replayButton = createDOMElement("button", ["id"], ["ytu_replay_button"]);
+    let replayButton = createDOMElement("button", ["id"], ["ytuReplayButton"]);
     replayButton.addEventListener("click", setReplayStatus);
+
+    readyYTContextMenu();
 
     let currentStorageValue = getLocalStorageValue(getVideoURL());
     if (currentStorageValue === null || currentStorageValue === "false") {
-        replayButton.classList.add("ytu_replay_button_off");
+        replayButton.classList.add("ytuReplayButton");
     } else {
-        replayButton.classList.add("ytu_replay_button_on");
-        clickYTContextMenu();
+        replayButton.classList.add("ytuReplayButtonOn");
+        setYTContextMenuReplayStatus();
     }
 
     let replayButtonIcon = document.createTextNode("↻");
-    replayButtonIcon.id = "ytu_replay_button_icon";
+    replayButtonIcon.id = "ytuReplayButtonIcon";
     replayButton.appendChild(replayButtonIcon);
 
     let ytpLeftControls = getDOMElement("class", "ytp-left-controls");
     ytpLeftControls.insertBefore(replayButton, ytpLeftControls.childNodes[3]);
 
-    window.setInterval(resetReplayButton, 1000);
-    window.setInterval(videoplayerFullscreen, 1);
+    getDOMElement("class", "ytp-fullscreen-button ytp-button").addEventListener("click", videoplayerFullscreen);
 }
 
 
 // Checks if the current video is in fullscreen mode or not,
 // and moves the replay-button-icon into the correct position.
 function videoplayerFullscreen() {
-    let replayButton = getDOMElement("id", "ytu_replay_button");
-    let fullscreenModeActive = getDOMElement("class", "html5-video-player").classList.contains("ytp-big-mode");
+    // This timeout is so that the dom element can make changes to its classes, before they are investigated.
+    setTimeout(function() {
+        let replayButton = getDOMElement("id", "ytuReplayButton");
+        let fullscreenModeActive = getDOMElement("class", "html5-video-player").classList.contains("ytp-big-mode");
 
-    if (fullscreenModeActive && !replayButton.classList.contains("ytuFullScreen")) {
-        replayButton.classList.add("ytuFullScreen");
-    } else if (!fullscreenModeActive){
-        replayButton.classList.remove("ytuFullScreen");
-    }
+        if (fullscreenModeActive) {
+            replayButton.classList.add("ytuReplayButtonFullScreen");
+        } else if (!fullscreenModeActive){
+            replayButton.classList.remove("ytuReplayButtonFullScreen");
+        }
+    }, 100)
 }
 
 // Reset replay-button status on URL change. This ensures that
@@ -56,64 +60,58 @@ function resetReplayButton(){
 // interval for the replayVideo function if the replay-button
 // is activated, or clears the interval if it's deactivated.
 function setReplayStatus() {
-    let replayButton = getDOMElement("id", "ytu_replay_button").classList;
+    let replayButton = getDOMElement("id", "ytuReplayButton").classList;
     let toggleButton = getDOMElement("id", "toggleButton");
 
     if (!getReplayBtnStatus()) {
-        replayButton.add("ytu_replay_button_on");
-        replayButton.remove("ytu_replay_button_off");
+        replayButton.add("ytuReplayButtonOn");
         setLocalStorageValue(getVideoURL(), "true");
+        manageIntervals(false);
 
     } else if (getReplayBtnStatus()) {
-        replayButton.add("ytu_replay_button_off");
-        replayButton.remove("ytu_replay_button_on");
+        replayButton.remove("ytuReplayButtonOn");
         setLocalStorageValue(getVideoURL(), "false");
+        manageIntervals(true);
     }
 
-    clickYTContextMenu();
+    setYTContextMenuReplayStatus();
 }
 
 
 // Checks if the YouTube autoplay-button is activated or not.
 // @return true if the autoplay-button is activated, and false if it is not.
 function getReplayBtnStatus() {
-    if (getDOMElement("id", "ytu_replay_button").classList.contains("ytu_replay_button_on")) {
+    if (getDOMElement("id", "ytuReplayButton").classList.contains("ytuReplayButtonOn")) {
         return true;
     }
 
     return false;
 }
 
-
-async function clickYTContextMenu() {
+async function readyYTContextMenu() {
     let fullScreenAd = getDOMElement("class", "ytp-ad-preview-container");
 
     if (fullScreenAd != null || typeof fullScreenAd != "undefined") {
-        console.log("Test")
         await waitForFullscreenAd();
     }
 
-    for (i = 0; i < 10; i++) {
-        try {
-            getDOMElement("class", "video-stream").dispatchEvent(new MouseEvent("contextmenu", {
-                bubbles: true,
-                cancelable: false,
-                view: window,
-                button: 2,
-                buttons: 0,
-            }));
+    try {
+        getDOMElement("class", "video-stream").dispatchEvent(new MouseEvent("contextmenu", {
+            bubbles: true,
+            cancelable: false,
+            view: window,
+            button: 2,
+            buttons: 0,
+        }));
 
-            let contextMenuReplayBtn = getDOMElement("class", "ytp-menuitem")
-            let previousStatus = contextMenuReplayBtn.getAttribute("aria-checked");
-            document.querySelectorAll('[role="menuitemcheckbox"]')[0].click();
-
-            if (contextMenuReplayBtn.getAttribute("aria-checked") != previousStatus) {
-                console.log("works");
-                return;
-            }
-        } catch (e) {
-            // context menu couldn't be opened, trying again.
-        }
+        document.querySelectorAll('[role="menuitemcheckbox"]')[0].setAttribute("style", "display: none;");
+    } catch (e) {
+        readyYTContextMenu();
     }
-    console.log("context menu couldn't be opened even after 10 tries!");
+}
+
+function setYTContextMenuReplayStatus() {
+    if (getDOMElement("class", "ytp-menuitem").getAttribute("aria-checked") != getReplayBtnStatus()) {
+        document.querySelectorAll('[role="menuitemcheckbox"]')[0].click();
+    }
 }

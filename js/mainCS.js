@@ -40,17 +40,23 @@ function listenToBackground() {
 function injectJSFile() {
     try {
         if (checkURLForChange() && checkURLForVideo()) {
-            getFunctionalityList().forEach(function(currentValue) {
-                $('script').each(function () {
-                    if (this.src.includes(currentValue)) {
-                        this.parentNode.removeChild(this);
-                    }
-                })
+            let possibleOptions = ["replayButton", "skipAds", "speedupAutoplay", "preventAutostop", "mainDOM"];
+            possibleOptions.forEach(async function(currentEntry) {
+                let result = await getFromDB(currentEntry);
 
-                let scriptTag = document.createElement("script");
-                scriptTag.src = chrome.runtime.getURL("js/" + currentValue + ".js");
-                (document.head || document.documentElement).appendChild(scriptTag);
+                if (result === "true") {
+                    $('script').each(function () {
+                        if (this.src.includes(currentEntry)) {
+                            this.parentNode.removeChild(this);
+                        }
+                    })
+
+                    let scriptTag = document.createElement("script");
+                    scriptTag.src = chrome.runtime.getURL("js/" + currentEntry + ".js");
+                    (document.head || document.documentElement).appendChild(scriptTag);
+                }
             });
+
         }
     } catch (error) {
 
@@ -59,15 +65,14 @@ function injectJSFile() {
 
 
 function getFunctionalityList() {
+    return new Promise(
+        function(resolve) {
 
-    let possibleOptioins = ["mainDOM", "preventAutostop", "speedupAutoplay", "replayButton", "skipAds"];
-    let activeFunctionality = [];
 
-    possibleOptioins.forEach(function(){
-
-    });
-
-    return activeFunctionality;
+            console.log(activeFunctionality[1])
+            resolve(activeFunctionality);
+        }
+    );
 }
 
 // Checks if the current page URL is different from the last time this function was called.

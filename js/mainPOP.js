@@ -27,7 +27,7 @@ async function setSliderStatus(id) {
 
 
 function prepareSliders() {
-    let sliders = ["replayButton", "skipAd", "speedupAutoplay", "preventAutoplay"]
+    let sliders = ["replayButton", "skipAds", "speedupAutoplay", "preventAutostop"]
     let setup = false;
 
     while (!setup) {
@@ -48,6 +48,7 @@ function prepareSliders() {
     }
 }
 
-
 prepareSliders();
+
+
 
