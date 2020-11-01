@@ -24,7 +24,7 @@
         {
         "matches": ["https://www.youtube.com/*"],
         "css": ["css/DOMcontent.css"],
-        "js": ["js/jquery3-2-1.js", "js/dbManagement.js", "js/mainCS.js"]
+        "js": ["js/jquery3-2-1.js", "js/dbManagement.js", "js/errorReporting.js", "js/mainCS.js"]
         }
     ],
   "web_accessible_resources": [

@@ -1,5 +1,6 @@
 
 window.setInterval(injectJSFile, 1);
+window.setInterval(errorManagement, 500)
 
 var settingUpTabID = window.setInterval(setTabID, 1);
 var tabID = "";
@@ -25,7 +26,7 @@ function setTabID() {
             listenToBackground();
         }
     } catch (e) {
-        // Nothing needs to be caught, the element in question is "null" because the page hasn't loaded it jet.
+       reportError();
     }
 }
 
@@ -56,10 +57,9 @@ function injectJSFile() {
                     (document.head || document.documentElement).appendChild(scriptTag);
                 }
             });
-
         }
-    } catch (error) {
-
+    } catch (e) {
+        reportError();
     }
 }
 
@@ -67,7 +67,6 @@ function injectJSFile() {
 function getFunctionalityList() {
     return new Promise(
         function(resolve) {
-
 
             console.log(activeFunctionality[1])
             resolve(activeFunctionality);

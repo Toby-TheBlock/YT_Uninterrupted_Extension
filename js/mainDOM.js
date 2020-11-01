@@ -18,13 +18,24 @@ function setupIntervals() {
             // Start the intervals for the prevent-autostop and speed-up-autoplay functionality.
             manageIntervals(true);
 
+            let notLoggedInnContainer = getDOMElement("class", "style-scope ytd-button-renderer style-suggestive size-small");
+            let notLoggedInnIcon = "M12,0 C18.62375,0 24,5.37625 24,12 C24,18.62375 18.62375,24 12,24 C5.37625,24 " +
+                "0,18.62375 0,12 C0,5.37625 5.37625,0 12,0 Z M12,10.63625 C13.66,10.63625 15,9.29625 15,7.63625 C15," +
+                "5.97625 13.66,4.63625 12,4.63625 C10.34,4.63625 9,5.97625 9,7.63625 C9,9.29625 10.34,10.63625 " +
+                "12,10.63625 Z M12,12.40875 C8.33375,12.40875 5.455,14.18125 5.455,15.8175 C6.84125,17.95 " +
+                "9.26875,19.3625 12,19.3625 C14.73125,19.3625 17.15875,17.95 18.545,15.8175 C18.545,14.18125 " +
+                "15.66625,12.40875 12,12.40875 Z";
 
-            //if (getDOMElement("class", "style-scope ytd-button-renderer style-suggestive size-small").getAttribute("aria-label") === "")
-
+            if (notLoggedInnContainer != null) {
+                if (notLoggedInnContainer.childNodes[0].childNodes[0].childNodes[0].getAttribute("d") === notLoggedInnIcon) {
+                    console.log("Not logged inn");
+                }
+            }
+            
             // End the setupStage by clearing the interval.
             clearInterval(setupStage);
-        } catch (error) {
-            console.log("Something went wrong under the configuration: " + error + ". Trying again!");
+        } catch (e) {
+            reportError();
         }
     }
 }
@@ -110,7 +121,7 @@ function deleteLocalStorage(storageIndex) {
     try {
         localStorage.removeItem(storageIndex);
     } catch (e) {
-       // Nothing needs to be caught, the localStorage in question just doesn't exist.
+       reportError();
     }
 }
 
@@ -135,3 +146,12 @@ function setLocalStorageValue(storageIndex, value) {
 }
 
 
+function createMutator(callbackFunction, objectToObserve) {
+    new MutationObserver(callbackFunction).observe(objectToObserve, {attributes: true});
+}
+
+
+function reportError() {
+    let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
+    localStorage.setItem("occurredErrors", occurredErrors.toString());
+}

@@ -1,9 +1,9 @@
 
-// Create a button element, which acts like a replay-button,
-// and insert it to the video-controlbar. Also calls all necessary
-// functions which make the replay-button work as intended.
+/**
+ * Creates a dedicated replay-button, sets it's intial state, and inserts it to the video-controlbar.
+ * Also initialises/sets up all of the functionality for the replay-button.
+ */
 function createReplayButton() {
-
     let replayButton = createDOMElement("button", ["id"], ["ytuReplayButton"]);
     replayButton.addEventListener("click", setReplayStatus);
 
@@ -24,41 +24,54 @@ function createReplayButton() {
     let ytpLeftControls = getDOMElement("class", "ytp-left-controls");
     ytpLeftControls.insertBefore(replayButton, ytpLeftControls.childNodes[3]);
 
-    getDOMElement("class", "ytp-fullscreen-button ytp-button").addEventListener("click", videoplayerFullscreen);
+    createMutator(detectFullscreen, getDOMElement("class", "html5-video-player"));
+
 }
 
 
-// Checks if the current video is in fullscreen mode or not,
-// and moves the replay-button-icon into the correct position.
-function videoplayerFullscreen() {
-    // This timeout is so that the dom element can make changes to its classes, before they are investigated.
-    setTimeout(function() {
-        let replayButton = getDOMElement("id", "ytuReplayButton");
-        let fullscreenModeActive = getDOMElement("class", "html5-video-player").classList.contains("ytp-big-mode");
-
-        if (fullscreenModeActive) {
-            replayButton.classList.add("ytuReplayButtonFullScreen");
-        } else if (!fullscreenModeActive){
-            replayButton.classList.remove("ytuReplayButtonFullScreen");
+/**
+ * Looks for changes in the attributes of the specififed element (in this case the main video-player).
+ * @param mutations - mutations which are to be monitored.
+ */
+function detectFullscreen(mutations) {
+    for (let mutation of mutations) {
+        if (mutation.type === "attributes") {
+            videoplayerFullscreen();
         }
-    }, 100)
-}
-
-// Reset replay-button status on URL change. This ensures that
-// the replay-button isn't still active on video change.
-function resetReplayButton(){
-    try {
-        if (checkURLForChange() && getReplayBtnStatus()) {
-            setReplayStatus();
-        }
-    } catch (e) {
-        // Nothing needs to be caught, the element in question is "null" because the page hasn't loaded it jet.
     }
 }
 
-// Set replay-button status to "on" or "off". Also starts a
-// interval for the replayVideo function if the replay-button
-// is activated, or clears the interval if it's deactivated.
+
+/**
+ * Moves the replay-button into the right place, bases on if the video-player is in fullscreenmode or not.
+ */
+function videoplayerFullscreen() {
+    let replayButton = getDOMElement("id", "ytuReplayButton");
+    let fullscreenModeActive = getDOMElement("class", "html5-video-player").classList.contains("ytp-big-mode");
+
+    if (fullscreenModeActive) {
+        replayButton.classList.add("ytuReplayButtonFullScreen");
+    } else if (!fullscreenModeActive){
+        replayButton.classList.remove("ytuReplayButtonFullScreen");
+    }
+}
+
+
+/**
+ * Resets the replay-button status on URL change.
+ * This ensures that the replay-button doesn't stay active on video change.
+ */
+function resetReplayButton(){
+    if (checkURLForChange() && getReplayBtnStatus()) {
+        setReplayStatus();
+    }
+}
+
+
+/**
+ * Sets the replay-button status to either "on" (true) or "off" (false), based on it's current state.
+ * Also activates/clears all background intervals which are being used.
+ */
 function setReplayStatus() {
     let replayButton = getDOMElement("id", "ytuReplayButton").classList;
     let toggleButton = getDOMElement("id", "toggleButton");
@@ -78,8 +91,10 @@ function setReplayStatus() {
 }
 
 
-// Checks if the YouTube autoplay-button is activated or not.
-// @return true if the autoplay-button is activated, and false if it is not.
+/**
+ * Checks and returns the current state of the replay-button.
+ * @returns {boolean}
+ */
 function getReplayBtnStatus() {
     if (getDOMElement("id", "ytuReplayButton").classList.contains("ytuReplayButtonOn")) {
         return true;
@@ -88,6 +103,11 @@ function getReplayBtnStatus() {
     return false;
 }
 
+
+/**
+ *
+ * @returns {Promise<void>}
+ */
 async function readyYTContextMenu() {
     let fullScreenAd = getDOMElement("class", "ytp-ad-preview-container");
 

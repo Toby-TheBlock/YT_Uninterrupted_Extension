@@ -1,4 +1,23 @@
-if (failedSetupAttempts > 100) {
+
+
+function reportError() {
+    let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
+    localStorage.setItem("occurredErrors", occurredErrors.toString());
+}
+
+function errorManagement() {
+    let errorCount = "0";
+
+    if (!checkURLForChange) {
+        if (parseInt(localStorage.getItem("occurredErrors")) > 10) {
+            createChromeMSGBox();
+        }
+    } else {
+        localStorage.setItem("occurredErrors", errorCount);
+    }
+}
+
+function createChromeMSGBox() {
     chrome.runtime.sendMessage('', {
         type: 'notification',
         options: {
@@ -8,9 +27,4 @@ if (failedSetupAttempts > 100) {
             type: 'basic'
         }
     });
-} else {
-    failedSetupAttempts++;
 }
-
-
-var failedSetupAttempts = 0;
