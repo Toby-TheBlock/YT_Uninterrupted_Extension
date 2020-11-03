@@ -27,12 +27,3 @@ function preventAutostop() {
         }, 100);
     }
 }
-
-
-function preventLoginPopup() {
-    let noThxBtn = getDOMElement("class", "style-scope yt-button-renderer style-text size-small");
-
-    if (typeof noThxBtn !== "undefined" || noThxBtn !== null) {
-        noThxBtn.click();
-    }
-}
