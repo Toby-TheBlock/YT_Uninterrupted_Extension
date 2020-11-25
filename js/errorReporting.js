@@ -1,30 +1,37 @@
 
-
-function reportError() {
-    let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
-    localStorage.setItem("occurredErrors", occurredErrors.toString());
-}
+var occuredErrorsReset = true;
 
 function errorManagement() {
-    let errorCount = "0";
-
-    if (!checkURLForChange) {
-        if (parseInt(localStorage.getItem("occurredErrors")) > 10) {
-            createChromeMSGBox();
-        }
+    if (occuredErrorsReset) {
+        resetErrorCount();
     } else {
-        localStorage.setItem("occurredErrors", errorCount);
+        if (parseInt(localStorage.getItem("occurredErrors")) === 1) {
+            createErrorMSGBox();
+        }
     }
 }
 
-function createChromeMSGBox() {
-    chrome.runtime.sendMessage('', {
-        type: 'notification',
-        options: {
-            title: 'Something went wrong! X_X',
-            message: 'YouTube uninterrupted couldn\'t initialize correctly.\nTry reloading the page.',
-            iconUrl: '',
-            type: 'basic'
-        }
-    });
+function resetErrorCount() {
+    localStorage.setItem("occurredErrors", "0");
+    occuredErrorsReset = false;
+}
+
+function createErrorMSGBox() {
+    if (typeof getDOMElement("class", "errorPopupContainer") === "undefined") {
+        let popupContainer = createDOMElement("div", ["class"], ["errorPopupContainer"]);
+
+        let closeBtn = createDOMElement("p", ["class", "click"], ["errorPopupContent"]);
+        closeBtn.addEventListener("click", removeErrorMSGBox);
+        let closeBtnTxt = document.createTextNode("X");
+        closeBtn.appendChild(closeBtnTxt);
+        popupContainer.appendChild(closeBtn);
+
+        document.body.appendChild(popupContainer);
+    }
+
+}
+
+function removeErrorMSGBox() {
+    getDOMElement("class", "errorPopupContainer").remove();
+    resetErrorCount();
 }

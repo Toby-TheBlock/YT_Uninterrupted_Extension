@@ -1,9 +1,8 @@
 
-window.setInterval(injectJSFile, 1);
-window.setInterval(errorManagement, 500);
+window.setInterval(setupExtenstionInDOM, 1);
 
 var notLoggedIn;
-checkIfLoggedIn();
+//checkIfLoggedIn();
 
 var settingUpTabID = window.setInterval(setTabID, 1);
 var tabID = "";
@@ -19,8 +18,8 @@ function setTabID() {
                 scriptTag.appendChild(textNode);
                 (document.head || document.documentElement).appendChild(scriptTag);
 
-                if (localStorage.getItem("oldURLForTab" + tabID) === null) {
-                    localStorage.setItem("oldURLForTab" + tabID, "noPreviousURL");
+                if (getLocalStorageValue("oldURLForTab" + tabID) === null) {
+                    setLocalStorageValue("oldURLForTab" + tabID, "noPreviousURL");
                 }
             } else {
                 clearInterval(settingUpTabID);
@@ -28,7 +27,7 @@ function setTabID() {
         } else {
             listenToBackground();
         }
-    } catch (e) {
+    } catch {
        reportError();
     }
 }
@@ -41,27 +40,32 @@ function listenToBackground() {
 }
 
 
-function injectJSFile() {
+function setupExtenstionInDOM() {
     try {
-        if (checkURLForChange() && checkURLForVideo()) {
-            let possibleOptions = ["replayButton", "skipAds", "speedupAutoplay", "preventAutostop", "mainDOM"];
-            possibleOptions.forEach(async function(currentEntry) {
-                let result = await getFromDB(currentEntry);
+        if (checkURLForChange()) {
+            occuredErrorsReset = true;
+            window.setInterval(errorManagement, 500);
 
-                if (result === "true") {
-                    $('script').each(function () {
-                        if (this.src.includes(currentEntry)) {
-                            this.parentNode.removeChild(this);
-                        }
-                    })
+            if (checkURLForVideo()) {
+                let possibleOptions = ["replayButton", "skipAds", "speedupAutoplay", "preventAutostop", "utensils", "mainDOM"];
+                possibleOptions.forEach(async function(currentEntry) {
+                    let result = currentEntry === "utensils" ? "true" : await getFromDB(currentEntry);
 
-                    let scriptTag = document.createElement("script");
-                    scriptTag.src = chrome.runtime.getURL("js/" + currentEntry + ".js");
-                    (document.head || document.documentElement).appendChild(scriptTag);
-                }
-            });
+                    if (result === "true") {
+                        $('script').each(function () {
+                            if (this.src.includes(currentEntry)) {
+                                this.parentNode.removeChild(this);
+                            }
+                        })
+
+                        let scriptTag = document.createElement("script");
+                        scriptTag.src = chrome.runtime.getURL("js/" + currentEntry + ".js");
+                        (document.head || document.documentElement).appendChild(scriptTag);
+                    }
+                });
+            }
         }
-    } catch (e) {
+    } catch {
         reportError();
     }
 }
@@ -89,12 +93,6 @@ function checkURLForChange() {
     return false;
 }
 
-
-// Checks if the current YouTube-page is a video.
-// @return true if current page is a video, else false.
-function checkURLForVideo() {
-    return document.URL.includes("https://www.youtube.com/watch");
-}
 
 function checkIfLoggedIn() {
     let notLoggedInnContainer = document.getElementsByTagName("yt-icon")[9];

@@ -1,16 +1,50 @@
 
+var fullscreenAdMutator;
+
 function skipAd() {
     let adBanner = getDOMElement("class", "ytp-ad-image-overlay");
-    let fullScreenAd = getDOMElement("class", "ytp-ad-skip-button ytp-button");
-    
+
     // Check if the ad is a banner or a skippable video, and act accordingly.
     if (adBanner != null && typeof adBanner != "undefined"){
-        document.getElementsByClassName('ytp-ad-overlay-close-button')[0].click();
+        adBanner.remove();
+        //document.getElementsByClassName('ytp-ad-overlay-close-button')[0].click();
         console.log('Ad Banner closed!');
-    } else if (fullScreenAd != null && typeof fullScreenAd != "undefined") {
-        document.getElementsByClassName('ytp-ad-skip-button ytp-button')[0].click();
-        console.log('Full video add skipped!');
     }
+    else if (fullscreenAdMutator == null) {
+        //fullscreenAdMutator = createMutator(detectFullscreenAd, getDOMElement("class", "html5-video-player"));
+    }
+}
+
+
+async function detectFullscreenAd(mutations) {
+    for (let mutation of mutations) {
+        if (mutation.type === "childList") {
+            let fullscreenAd = getDOMElement("class", "video-ads ytp-ad-module")
+            if (fullscreenAd != null && typeof fullscreenAd != "undefined") {
+                await skipFullscreenAd();
+                //fullscreenAd.remove();
+                console.log("test");
+            }
+        }
+    }
+}
+
+
+function skipFullscreenAd() {
+    return new Promise(
+        function(resolve) {
+            setTimeout(function() {
+                console.log("hello");
+                let skipButton = getDOMElement("class", "ytp-ad-skip-button ytp-button");
+                if (skipButton != null && typeof skipButton != "undefined") {
+                    skipButton.click();
+                    console.log("clicked")
+                }
+                resolve();
+            }, 5000);
+
+        }
+    );
 }
 
 function waitForFullscreenAd() {

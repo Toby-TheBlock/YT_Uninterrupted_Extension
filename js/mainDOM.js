@@ -17,10 +17,10 @@ function setupIntervals() {
 
             // Start the intervals for the prevent-autostop and speed-up-autoplay functionality.
             manageIntervals(true);
-            
+
             // End the setupStage by clearing the interval.
             clearInterval(setupStage);
-        } catch (e) {
+        } catch {
             reportError();
         }
     }
@@ -40,11 +40,6 @@ function manageIntervals(status) {
     }
 }
 
-// Checks if the current YouTube-page is a video.
-// @return true if current page is a video, else false.
-function checkURLForVideo() {
-    return document.URL.includes("https://www.youtube.com/watch");
-}
 
 function checkIfAutoplayHasBeenStopped() {
     if (localStorage.getItem("reloadAfterAutostop") === "true") {
@@ -52,6 +47,7 @@ function checkIfAutoplayHasBeenStopped() {
         getDOMElement("class", "ytp-next-button ytp-button").click();
     }
 }
+
 
 // Checks if the current page URL is different from the last time this function was called.
 // @return true if the oldURL and the currentURL are different, else false.
@@ -67,77 +63,16 @@ function checkURLForChange() {
         } else {
             return false;
         }
-    } catch(e) {
+    } catch {
         return false;
-    }
-}
-
-// The split("index") removes extra URL query-parameters which cause trouble in playlists.
-function getVideoURL() {
-    return window.location.href.split("index")[0];
-}
-
-function createDOMElement(elementType, elementattribute, value) {
-    let element = document.createElement("" + elementType + "");
-    elementattribute.forEach(function(currentVal, index) {
-        element.setAttribute(currentVal, value[index]);
-    });
-
-    return element;
-}
-
-function getDOMElement(retrievalMethod, identificator, index = 0) {
-    let object;
-    switch (retrievalMethod) {
-        case "id":
-            object = document.getElementById("" + identificator + "");
-            break;
-        case "class":
-            object = document.getElementsByClassName(identificator)[index];
-            break;
-        case "tag":
-            object = document.getElementsByTagName(identificator)[index];
-            break;
-    }
-
-    return object;
-}
-
-function deleteLocalStorage(storageIndex) {
-    try {
-        localStorage.removeItem(storageIndex);
-    } catch (e) {
-       reportError();
-    }
-}
-
-function getLocalStorageValue(storageIndex) {
-    return localStorage.getItem(storageIndex);
-}
-
-
-function setLocalStorageValue(storageIndex, value) {
-    let localData = getLocalStorageValue(storageIndex);
-    switch (localData) {
-        case null:
-            localStorage.setItem(storageIndex, value);
-            break;
-        case "true":
-            localStorage.setItem(storageIndex, "false");
-            break;
-        case "false":
-            localStorage.setItem(storageIndex, "true");
-            break;
     }
 }
 
 
 function createMutator(callbackFunction, objectToObserve) {
-    new MutationObserver(callbackFunction).observe(objectToObserve, {attributes: true});
+    const observer = new MutationObserver(callbackFunction);
+    observer.observe(objectToObserve, {attributes: true, childList: true});
+    return observer;
 }
 
 
-function reportError() {
-    let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
-    localStorage.setItem("occurredErrors", occurredErrors.toString());
-}

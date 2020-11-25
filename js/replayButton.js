@@ -80,14 +80,14 @@ function setReplayStatus() {
         replayButton.add("ytuReplayButtonOn");
         setLocalStorageValue(getVideoURL(), "true");
         manageIntervals(false);
+        setYTContextMenuReplayStatus();
 
     } else if (getReplayBtnStatus()) {
         replayButton.remove("ytuReplayButtonOn");
         setLocalStorageValue(getVideoURL(), "false");
         manageIntervals(true);
+        setYTContextMenuReplayStatus();
     }
-
-    setYTContextMenuReplayStatus();
 }
 
 
@@ -125,7 +125,7 @@ async function readyYTContextMenu() {
         }));
 
         document.querySelectorAll('[role="menuitemcheckbox"]')[0].setAttribute("style", "display: none;");
-    } catch (e) {
+    } catch {
         readyYTContextMenu();
     }
 }
