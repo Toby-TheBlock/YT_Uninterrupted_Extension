@@ -46,13 +46,9 @@ function deleteLocalStorage(storageIndex) {
     }
 }
 
-function getLocalStorageValue(storageIndex) {
-    return localStorage.getItem(storageIndex);
-}
-
 
 function setLocalStorageValue(storageIndex, value) {
-    let localData = getLocalStorageValue(storageIndex);
+    let localData = localStorage.getItem(storageIndex);
     switch (localData) {
         case "true":
             localStorage.setItem(storageIndex, "false");
@@ -67,8 +63,10 @@ function setLocalStorageValue(storageIndex, value) {
 }
 
 function reportError() {
-    let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
-    localStorage.setItem("occurredErrors", occurredErrors.toString());
+    if (parseInt(localStorage.getItem("occurredErrors")) >= 0) {
+        let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
+        localStorage.setItem("occurredErrors", occurredErrors.toString());
+    }
 }
 
 

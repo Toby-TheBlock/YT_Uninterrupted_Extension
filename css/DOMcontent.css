@@ -28,8 +28,8 @@
     position: fixed;
     top: 15px;
     right: 15px;
-    width: 350px;
-    height: 100px;
+    width: 430px;
+    height: 80px;
     border-radius: 5px;
     background-color: white;
     box-shadow: 0 0 5px black;
@@ -37,6 +37,32 @@
 }
 
 .errorPopupContent {
+    text-align: center;
+    margin-left: 5px;
+    padding: 10px;
+    line-height: 20px;
+    font-size: 150%;
+    max-width: 360px;
+}
+
+.closeBtnWrapper {
+    cursor: pointer;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 40px;
+    height: 80px;
+    border-radius: 0 5px 5px 0px;
+    box-shadow: 0 0 2px black;
+}
+
+.closeBtnWrapper:hover {
+    background-color: #b4b4b4;
+}
+
+.closeBtn {
     font-size: 200%;
-    color: red;
+    position: relative;
+    right: 3px;
+    top: 20px;
 }

@@ -18,7 +18,7 @@ function setTabID() {
                 scriptTag.appendChild(textNode);
                 (document.head || document.documentElement).appendChild(scriptTag);
 
-                if (getLocalStorageValue("oldURLForTab" + tabID) === null) {
+                if (localStorage.getItem("oldURLForTab" + tabID) === null) {
                     setLocalStorageValue("oldURLForTab" + tabID, "noPreviousURL");
                 }
             } else {
@@ -34,7 +34,7 @@ function setTabID() {
 
 
 function listenToBackground() {
-    chrome.runtime.onMessage.addListener(function (request) {
+    chrome.runtime.onMessage.addListener(function(request) {
         tabID = request.urlChange;
     });
 }

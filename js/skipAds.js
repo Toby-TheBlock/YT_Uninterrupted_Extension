@@ -11,7 +11,7 @@ function skipAd() {
         console.log('Ad Banner closed!');
     }
     else if (fullscreenAdMutator == null) {
-        //fullscreenAdMutator = createMutator(detectFullscreenAd, getDOMElement("class", "html5-video-player"));
+        fullscreenAdMutator = createMutator(detectFullscreenAd, getDOMElement("class", "html5-video-player"));
     }
 }
 
@@ -19,11 +19,9 @@ function skipAd() {
 async function detectFullscreenAd(mutations) {
     for (let mutation of mutations) {
         if (mutation.type === "childList") {
-            let fullscreenAd = getDOMElement("class", "video-ads ytp-ad-module")
+            let fullscreenAd = getDOMElement("class", "video-ads ytp-ad-module");
             if (fullscreenAd != null && typeof fullscreenAd != "undefined") {
                 await skipFullscreenAd();
-                //fullscreenAd.remove();
-                console.log("test");
             }
         }
     }
@@ -34,14 +32,13 @@ function skipFullscreenAd() {
     return new Promise(
         function(resolve) {
             setTimeout(function() {
-                console.log("hello");
                 let skipButton = getDOMElement("class", "ytp-ad-skip-button ytp-button");
                 if (skipButton != null && typeof skipButton != "undefined") {
                     skipButton.click();
-                    console.log("clicked")
                 }
+                getDOMElement("class", "video-ads ytp-ad-module").remove();
                 resolve();
-            }, 5000);
+            }, 3000);
 
         }
     );
@@ -54,7 +51,6 @@ function waitForFullscreenAd() {
             let timeToWait = parseInt(rawTime[0])*60000 + parseInt(rawTime[1])*1000 + 1000
 
             setTimeout(function (){
-                console.log("trying now!")
                 resolve();
             },timeToWait);
         }
