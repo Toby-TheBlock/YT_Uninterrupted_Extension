@@ -1,30 +1,48 @@
 
-
-function reportError() {
-    let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
-    localStorage.setItem("occurredErrors", occurredErrors.toString());
-}
+var occuredErrorsReset = true;
 
 function errorManagement() {
-    let errorCount = "0";
-
-    if (!checkURLForChange) {
-        if (parseInt(localStorage.getItem("occurredErrors")) > 10) {
-            createChromeMSGBox();
-        }
+    if (occuredErrorsReset) {
+        resetErrorCount();
     } else {
-        localStorage.setItem("occurredErrors", errorCount);
+        if (parseInt(localStorage.getItem("occurredErrors")) === 10) {
+            createErrorMSGBox();
+        }
     }
 }
 
-function createChromeMSGBox() {
-    chrome.runtime.sendMessage('', {
-        type: 'notification',
-        options: {
-            title: 'Something went wrong! X_X',
-            message: 'YouTube uninterrupted couldn\'t initialize correctly.\nTry reloading the page.',
-            iconUrl: '',
-            type: 'basic'
+function resetErrorCount() {
+    localStorage.setItem("occurredErrors", "0");
+    occuredErrorsReset = false;
+}
+
+function createErrorMSGBox() {
+    if (typeof getDOMElement("class", "errorPopupContainer") === "undefined") {
+        let popupContainer = createDOMElement("div", ["class"], ["errorPopupContainer"]);
+
+        let errorMsg = createDOMElement("p", ["class"], ["errorPopupContent"]);
+        let errorTxt = ["An error occured setting up the YT-uninterrupted. :(",
+            "Reloading the page will most likely solve this issue.",
+            "If the error still presists try restarting the web-browser."];
+        for (var i=0; i < errorTxt.length; i++) {
+            errorMsg.appendChild(document.createTextNode(errorTxt[i]));
+            errorMsg.appendChild(document.createElement("br"));
         }
-    });
+
+        popupContainer.appendChild(errorMsg);
+
+        let closeBtnWrapper = createDOMElement("div", ["class"], ["closeBtnWrapper"])
+        let closeBtn = createDOMElement("p", ["class"], ["closeBtn errorPopupContent"]);
+        closeBtn.innerHTML = "X";
+        closeBtn.addEventListener("click", removeErrorMSGBox);
+        closeBtnWrapper.appendChild(closeBtn);
+        popupContainer.appendChild(closeBtnWrapper);
+
+        document.body.appendChild(popupContainer);
+    }
+}
+
+function removeErrorMSGBox() {
+    getDOMElement("class", "errorPopupContainer").remove();
+    localStorage.setItem("occurredErrors", "-1");
 }

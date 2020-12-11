@@ -6,27 +6,31 @@ function getDB() {
 function writeToDB(id, state) {
     return new Promise(
         function(resolve, reject) {
-            let request = getDB();
+            try {
+                let request = getDB();
 
-            request.onupgradeneeded = function(event) {
-                let db = event.target.result;
-                db.createObjectStore("FunctionalityStatus", {keyPath: "id"});
+                request.onupgradeneeded = function(event) {
+                    let db = event.target.result;
+                    db.createObjectStore("FunctionalityStatus", {keyPath: "id"});
 
-                let transaction = event.target.transaction.objectStore("FunctionalityStatus");
-                transaction.add({id: "replayButton", activated: "true"});
-                transaction.add({id: "skipAds", activated: "true"});
-                transaction.add({id: "speedupAutoplay", activated: "true"});
-                transaction.add({id: "preventAutostop", activated: "true"});
-                transaction.add({id: "mainDOM", activated: "true"});
-            }
+                    let transaction = event.target.transaction.objectStore("FunctionalityStatus");
+                    transaction.add({id: "replayButton", activated: "true"});
+                    transaction.add({id: "skipAds", activated: "true"});
+                    transaction.add({id: "speedupAutoplay", activated: "true"});
+                    transaction.add({id: "preventAutostop", activated: "true"});
+                    transaction.add({id: "mainDOM", activated: "true"});
+                }
 
-            request.onerror = function() {
-                reject(Error("Something went wrong under requesting DB."));
-            }
+                request.onerror = function() {
+                    reject(Error("Something went wrong under requesting DB."));
+                }
 
-            request.onsuccess = function(event) {
-                let transaction = event.target.result.transaction("FunctionalityStatus", "readwrite").objectStore("FunctionalityStatus");
-                transaction.put({id: id, activated: state});
+                request.onsuccess = function(event) {
+                    let transaction = event.target.result.transaction("FunctionalityStatus", "readwrite").objectStore("FunctionalityStatus");
+                    transaction.put({id: id, activated: state});
+                }
+            } catch {
+                reportError();
             }
         }
     );
@@ -35,19 +39,24 @@ function writeToDB(id, state) {
 function getFromDB(id) {
     return new Promise(
         function(resolve, reject) {
-            let request = getDB();
+            try {
+                let request = getDB();
 
-            request.onerror = function() {
-                reject(Error("Something went wrong"));
-            }
-
-            request.onsuccess = function(event) {
-                let transaction = event.target.result.transaction("FunctionalityStatus", "readwrite").objectStore("FunctionalityStatus");
-
-                transaction.get(id).onsuccess = function(event) {
-                    resolve(event.target.result.activated);
+                request.onerror = function() {
+                    reject(Error("Something went wrong"));
                 }
+
+                request.onsuccess = function(event) {
+                    let transaction = event.target.result.transaction("FunctionalityStatus", "readwrite").objectStore("FunctionalityStatus");
+
+                    transaction.get(id).onsuccess = function(event) {
+                        resolve(event.target.result.activated);
+                    }
+                }
+            } catch {
+                reportError();
             }
+
         }
     );
 }

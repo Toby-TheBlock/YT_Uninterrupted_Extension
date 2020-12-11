@@ -9,7 +9,7 @@ function createReplayButton() {
 
     readyYTContextMenu();
 
-    let currentStorageValue = getLocalStorageValue(getVideoURL());
+    let currentStorageValue = localStorage.getItem(getVideoURL());
     if (currentStorageValue === null || currentStorageValue === "false") {
         replayButton.classList.add("ytuReplayButton");
     } else {
@@ -79,15 +79,15 @@ function setReplayStatus() {
     if (!getReplayBtnStatus()) {
         replayButton.add("ytuReplayButtonOn");
         setLocalStorageValue(getVideoURL(), "true");
-        manageIntervals(false);
+        manageAllIntervals(false);
+        setYTContextMenuReplayStatus();
 
     } else if (getReplayBtnStatus()) {
         replayButton.remove("ytuReplayButtonOn");
         setLocalStorageValue(getVideoURL(), "false");
-        manageIntervals(true);
+        manageAllIntervals(true);
+        setYTContextMenuReplayStatus();
     }
-
-    setYTContextMenuReplayStatus();
 }
 
 
@@ -125,7 +125,7 @@ async function readyYTContextMenu() {
         }));
 
         document.querySelectorAll('[role="menuitemcheckbox"]')[0].setAttribute("style", "display: none;");
-    } catch (e) {
+    } catch {
         readyYTContextMenu();
     }
 }

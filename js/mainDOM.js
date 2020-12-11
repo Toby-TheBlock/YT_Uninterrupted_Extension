@@ -1,7 +1,12 @@
 
-var setupStage = window.setInterval(setupIntervals, 1000);
-var intervalFunctions = [resetReplayButton, playNextVideo, preventAutostop, skipAd];
-var activeIntervals = [];
+setTimeout(
+    function(){
+        setupIntervals();
+    }, 500
+);
+
+var intervalFunctions = new Map([["RPB", resetReplayButton], ["PNV", playNextVideo], ["PA", preventAutostop], ["SA", skipAd]]);
+var activeIntervals = new Map();
 
 // Sets up intervals for all the functions which are needed to support the extentions functionality.
 // Runs only when the current Youtube-page is a video.
@@ -16,35 +21,43 @@ function setupIntervals() {
             }
 
             // Start the intervals for the prevent-autostop and speed-up-autoplay functionality.
-            manageIntervals(true);
-            
-            // End the setupStage by clearing the interval.
-            clearInterval(setupStage);
-        } catch (e) {
+            manageAllIntervals(true);
+            createMutator(checkIfVideoIsPlaying, getDOMElement("class", "ytp-play-button ytp-button").childNodes[0].childNodes[1]);
+
+        } catch {
             reportError();
+            setupIntervals();
         }
     }
 }
 
+
 // Sets up intervals for all of the continues extensions functions, or stops them.
 // @para1 boolean that decides if the intervals are to be setup or stopped.
-function manageIntervals(status) {
+function manageAllIntervals(status) {
     if (status) {
-        intervalFunctions.forEach(function(currentEntry) {
-            activeIntervals.push(window.setInterval(currentEntry, 100))
-        })
+        for (let [key, intervalFunction] of intervalFunctions.entries()) {
+            activeIntervals.set(key, window.setInterval(intervalFunction, 100));
+        }
     } else {
-        activeIntervals.forEach(function(currentEntry) {
-            clearInterval(currentEntry);
-        })
+        for (let interval of activeIntervals.values()) {
+            clearInterval(interval);
+        }
     }
 }
 
-// Checks if the current YouTube-page is a video.
-// @return true if current page is a video, else false.
-function checkURLForVideo() {
-    return document.URL.includes("https://www.youtube.com/watch");
+
+function manageSingleInterval(intervalId, status) {
+    if (status) {
+        activeIntervals.set(intervalId, window.setInterval(intervalFunctions.get(intervalId), 100));
+    } else {
+        if (activeIntervals.has(intervalId)) {
+            clearInterval(activeIntervals.get(intervalId));
+            activeIntervals.delete(intervalId);
+        }
+    }
 }
+
 
 function checkIfAutoplayHasBeenStopped() {
     if (localStorage.getItem("reloadAfterAutostop") === "true") {
@@ -53,13 +66,29 @@ function checkIfAutoplayHasBeenStopped() {
     }
 }
 
+function checkIfVideoIsPlaying(mutations) {
+    for (let mutation of mutations) {
+        if (mutation.type === "attributes") {
+            let videoPlaying = getDOMElement("class", "ytp-play-button ytp-button").childNodes[0].childNodes[1].getAttribute("d") === "M 12,26 16,26 16,10 12,10 z M 21,26 25,26 25,10 21,10 z";
+            setTimeout(function (){
+                if (!videoPlaying && activeIntervals.has("PA")) {
+                    manageSingleInterval("PA", false);
+                } else if (videoPlaying && !activeIntervals.has("PA")) {
+                    manageSingleInterval("PA", true);
+                }
+            }, 3000);
+        }
+    }
+}
+
+
 // Checks if the current page URL is different from the last time this function was called.
 // @return true if the oldURL and the currentURL are different, else false.
 function checkURLForChange() {
     try {
         let currentTabID = getDOMElement("id", "TabID").innerHTML;
         let currentURL = getVideoURL();
-        let oldURL = getLocalStorageValue("oldURLForTab" + currentTabID)
+        let oldURL = localStorage.getItem("oldURLForTab" + currentTabID)
         if (currentURL !== oldURL) {
             deleteLocalStorage(oldURL);
             localStorage.setItem("oldURLForTab" + currentTabID, currentURL);
@@ -67,77 +96,16 @@ function checkURLForChange() {
         } else {
             return false;
         }
-    } catch(e) {
+    } catch {
         return false;
-    }
-}
-
-// The split("index") removes extra URL query-parameters which cause trouble in playlists.
-function getVideoURL() {
-    return window.location.href.split("index")[0];
-}
-
-function createDOMElement(elementType, elementattribute, value) {
-    let element = document.createElement("" + elementType + "");
-    elementattribute.forEach(function(currentVal, index) {
-        element.setAttribute(currentVal, value[index]);
-    });
-
-    return element;
-}
-
-function getDOMElement(retrievalMethod, identificator, index = 0) {
-    let object;
-    switch (retrievalMethod) {
-        case "id":
-            object = document.getElementById("" + identificator + "");
-            break;
-        case "class":
-            object = document.getElementsByClassName(identificator)[index];
-            break;
-        case "tag":
-            object = document.getElementsByTagName(identificator)[index];
-            break;
-    }
-
-    return object;
-}
-
-function deleteLocalStorage(storageIndex) {
-    try {
-        localStorage.removeItem(storageIndex);
-    } catch (e) {
-       reportError();
-    }
-}
-
-function getLocalStorageValue(storageIndex) {
-    return localStorage.getItem(storageIndex);
-}
-
-
-function setLocalStorageValue(storageIndex, value) {
-    let localData = getLocalStorageValue(storageIndex);
-    switch (localData) {
-        case null:
-            localStorage.setItem(storageIndex, value);
-            break;
-        case "true":
-            localStorage.setItem(storageIndex, "false");
-            break;
-        case "false":
-            localStorage.setItem(storageIndex, "true");
-            break;
     }
 }
 
 
 function createMutator(callbackFunction, objectToObserve) {
-    new MutationObserver(callbackFunction).observe(objectToObserve, {attributes: true});
+    const observer = new MutationObserver(callbackFunction);
+    observer.observe(objectToObserve, {attributes: true, childList: true});
+    return observer;
 }
 
 
-function reportError() {
-    let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
-    localStorage.setItem("occurredErrors", occurredErrors.toString());
-}
