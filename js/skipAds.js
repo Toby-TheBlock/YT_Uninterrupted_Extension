@@ -36,10 +36,9 @@ function skipFullscreenAd() {
                 if (skipButton != null && typeof skipButton != "undefined") {
                     skipButton.click();
                 }
-                getDOMElement("class", "video-ads ytp-ad-module").remove();
+                //getDOMElement("class", "video-ads ytp-ad-module").remove();
                 resolve();
-            }, 3000);
-
+            }, 1000);
         }
     );
 }

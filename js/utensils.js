@@ -70,6 +70,18 @@ function reportError() {
 }
 
 
+function getDataFromBackground(id) {
+    return new Promise(
+        function(resolve) {
+            let port = chrome.runtime.connect({name: "getFromDB"});
+            port.postMessage({getFromDB: "" + id + ""});
+            port.onMessage.addListener(function(response) {
+                resolve(response.data);
+            });
+        }
+    );
+}
+
 /* LOOK AT THIS AT A LATER POINT
 
 // Checks if the current page URL is different from the last time this function was called.

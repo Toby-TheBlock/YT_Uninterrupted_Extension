@@ -49,14 +49,15 @@ function setupExtenstionInDOM() {
             if (checkURLForVideo()) {
                 let possibleOptions = ["replayButton", "skipAds", "speedupAutoplay", "preventAutostop", "utensils", "mainDOM"];
                 possibleOptions.forEach(async function(currentEntry) {
-                    let result = currentEntry === "utensils" ? "true" : await getFromDB(currentEntry);
+
+                    let result = currentEntry === "utensils" ? "true" : await getDataFromBackground(currentEntry);
 
                     if (result === "true") {
-                        $('script').each(function () {
+                        $('script').each(function() {
                             if (this.src.includes(currentEntry)) {
                                 this.parentNode.removeChild(this);
                             }
-                        })
+                        });
 
                         let scriptTag = document.createElement("script");
                         scriptTag.src = chrome.runtime.getURL("js/" + currentEntry + ".js");

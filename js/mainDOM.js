@@ -1,12 +1,42 @@
 
+var availableFunctionality = ["replayButton", "skipAds", "speedupAutoplay", "preventAutostop"];
+var activeFunctionality = new Map();
+var activeIntervals = new Map();
+
+selectFunctionality();
+
 setTimeout(
     function(){
         setupIntervals();
     }, 500
 );
 
-var intervalFunctions = new Map([["RPB", resetReplayButton], ["PNV", playNextVideo], ["PA", preventAutostop], ["SA", skipAd]]);
-var activeIntervals = new Map();
+function selectFunctionality() {
+    availableFunctionality.forEach(function(currentEntry) {
+        let scriptTags = document.head.getElementsByTagName("script");
+        for (let tag of scriptTags) {
+            if (tag.src.includes(currentEntry)) {
+                var value;
+                switch (currentEntry) {
+                    case "replayButton":
+                        value = resetReplayButton;
+                        break;
+                    case "skipAds":
+                        value = skipAd;
+                        break;
+                    case "speedupAutoplay":
+                        value = playNextVideo;
+                        break;
+                    case "preventAutostop":
+                        value = preventAutostop;
+                        break;
+                }
+                activeFunctionality.set(currentEntry, value);
+            }
+        }
+    });
+}
+
 
 // Sets up intervals for all the functions which are needed to support the extentions functionality.
 // Runs only when the current Youtube-page is a video.
@@ -15,15 +45,14 @@ function setupIntervals() {
         try {
             checkIfAutoplayHasBeenStopped();
 
-            // Create a replayButton if isn't allready present on the page.
-            if (getDOMElement("id", "ytuReplayButton") === null) {
+            // Create a replayButton if isn't already present on the page.
+            if (activeFunctionality.has("replayButton") && getDOMElement("id", "ytuReplayButton") === null) {
                 createReplayButton();
             }
 
             // Start the intervals for the prevent-autostop and speed-up-autoplay functionality.
             manageAllIntervals(true);
             createMutator(checkIfVideoIsPlaying, getDOMElement("class", "ytp-play-button ytp-button").childNodes[0].childNodes[1]);
-
         } catch {
             reportError();
             setupIntervals();
@@ -36,7 +65,7 @@ function setupIntervals() {
 // @para1 boolean that decides if the intervals are to be setup or stopped.
 function manageAllIntervals(status) {
     if (status) {
-        for (let [key, intervalFunction] of intervalFunctions.entries()) {
+        for (let [key, intervalFunction] of activeFunctionality.entries()) {
             activeIntervals.set(key, window.setInterval(intervalFunction, 100));
         }
     } else {
@@ -49,7 +78,7 @@ function manageAllIntervals(status) {
 
 function manageSingleInterval(intervalId, status) {
     if (status) {
-        activeIntervals.set(intervalId, window.setInterval(intervalFunctions.get(intervalId), 100));
+        activeIntervals.set(intervalId, window.setInterval(activeFunctionality.get(intervalId), 100));
     } else {
         if (activeIntervals.has(intervalId)) {
             clearInterval(activeIntervals.get(intervalId));
@@ -71,10 +100,10 @@ function checkIfVideoIsPlaying(mutations) {
         if (mutation.type === "attributes") {
             let videoPlaying = getDOMElement("class", "ytp-play-button ytp-button").childNodes[0].childNodes[1].getAttribute("d") === "M 12,26 16,26 16,10 12,10 z M 21,26 25,26 25,10 21,10 z";
             setTimeout(function (){
-                if (!videoPlaying && activeIntervals.has("PA")) {
-                    manageSingleInterval("PA", false);
-                } else if (videoPlaying && !activeIntervals.has("PA")) {
-                    manageSingleInterval("PA", true);
+                if (!videoPlaying && activeIntervals.has("preventAutostop")) {
+                    manageSingleInterval("preventAutostop", false);
+                } else if (videoPlaying && !activeIntervals.has("preventAutostop")) {
+                    manageSingleInterval("preventAutostop", true);
                 }
             }, 3000);
         }
