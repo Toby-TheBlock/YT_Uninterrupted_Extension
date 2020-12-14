@@ -1,8 +1,8 @@
 
-function getDB() {
-    return window.indexedDB.open("ytUninterruptedDB", 1);
-}
-
+/**
+ * Creates an objectstore and filles it with default data.
+ * @param event
+ */
 function configureDB(event) {
     let db = event.target.result;
     db.createObjectStore("FunctionalityStatus", {keyPath: "id"});
@@ -15,6 +15,13 @@ function configureDB(event) {
     transaction.add({id: "mainDOM", activated: "true"});
 }
 
+
+/**
+ * Adds a new DB entry.
+ * @param id - the identifier for the current entry.
+ * @param state - true/false based on if the current entry is supposed to be active functionality.
+ * @returns {Promise<unknown>}
+ */
 function writeToDB(id, state) {
     return new Promise(
         function(resolve, reject) {
@@ -36,6 +43,12 @@ function writeToDB(id, state) {
     );
 }
 
+
+/**
+ * Gets the data from a DB entry.
+ * @param id - the identifier of the DB entry which is to be fetched.
+ * @returns {Promise<unknown>}
+ */
 function getFromDB(id) {
     return new Promise(
         function(resolve, reject) {
@@ -58,6 +71,12 @@ function getFromDB(id) {
         }
     );
 }
+
+
+function getDB() {
+    return window.indexedDB.open("ytUninterruptedDB", 1);
+}
+
 
 async function sendToDB(id, state) {
     await writeToDB(id, state);
