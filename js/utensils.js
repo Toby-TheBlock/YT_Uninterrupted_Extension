@@ -1,10 +1,21 @@
 
-// returns a short version of the URL which doesn't include query-parameters and such,
-// as they change even when the video is playing which cause trouble in regards to the playbutton.
+/**
+ * Gets a short version of the page-URL which doesn't include query-parameters and such,
+ * as they somethimes change while a video is playing which cause trouble in regards to resetting things.
+ * @returns {string}
+ */
 function getVideoURL() {
     return window.location.href.substring(0,50);
 }
 
+
+/**
+ * Shorthand function for creating a new DOM element.
+ * @param elementType - string which defines the elements type
+ * @param elementattribute - list of attributes which are to be assign to the element.
+ * @param value - list over the value to be assigned to the attributes.
+ * @returns {HTMLElement}
+ */
 function createDOMElement(elementType, elementattribute, value) {
     let element = document.createElement("" + elementType + "");
     elementattribute.forEach(function(currentVal, index) {
@@ -14,6 +25,14 @@ function createDOMElement(elementType, elementattribute, value) {
     return element;
 }
 
+
+/**
+ * Shorthand function for retrieving a DOM element.
+ * @param retrievalMethod - string which defines the elements type who's to be retrieved.
+ * @param identificator - the id, class- or tag-name of the element.
+ * @param index - index of the HTML-collection element which is to be retrieved.
+ * @returns {Element}
+ */
 function getDOMElement(retrievalMethod, identificator, index = 0) {
     let object;
     switch (retrievalMethod) {
@@ -32,8 +51,10 @@ function getDOMElement(retrievalMethod, identificator, index = 0) {
 }
 
 
-// Checks if the current YouTube-page is a video.
-// @return true if current page is a video, else false.
+/**
+ * Checks if the current YouTube-page is a video.
+ * @returns {boolean}
+ */
 function checkURLForVideo() {
     return document.URL.includes("https://www.youtube.com/watch");
 }
@@ -47,6 +68,11 @@ function deleteLocalStorage(storageIndex) {
 }
 
 
+/**
+ * Updates a localStorage value, if the value is either true/false the opppsite value is being stored.
+ * @param storageIndex
+ * @param value
+ */
 function setLocalStorageValue(storageIndex, value) {
     let localData = localStorage.getItem(storageIndex);
     switch (localData) {
@@ -62,6 +88,11 @@ function setLocalStorageValue(storageIndex, value) {
     }
 }
 
+
+/**
+ * Increases the countervalue stored in a localStorage by one,
+ * as long as the localStorage hasn't been locked to incrementation.
+ */
 function reportError() {
     if (parseInt(localStorage.getItem("occurredErrors")) >= 0) {
         let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
@@ -69,6 +100,30 @@ function reportError() {
     }
 }
 
+
+/**
+ * Communicates with the background in order to retrieve data form the extension database.
+ * @param id - id of the database entry who's data is to be retrieved.
+ * @returns {Promise<unknown>}
+ */
+function getDataFromBackground(id) {
+    return new Promise(
+        function(resolve) {
+            let port = chrome.runtime.connect({name: "getFromDB"});
+            port.postMessage({getFromDB: "" + id + ""});
+            port.onMessage.addListener(function(response) {
+                resolve(response.data);
+            });
+        }
+    );
+}
+
+
+function createMutator(callbackFunction, objectToObserve) {
+    const observer = new MutationObserver(callbackFunction);
+    observer.observe(objectToObserve, {attributes: true, childList: true});
+    return observer;
+}
 
 /* LOOK AT THIS AT A LATER POINT
 

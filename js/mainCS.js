@@ -4,10 +4,14 @@ window.setInterval(setupExtenstionInDOM, 1);
 var notLoggedIn;
 //checkIfLoggedIn();
 
+var oldURL = "";
 var settingUpTabID = window.setInterval(setTabID, 1);
 var tabID = "";
 
 
+/**
+ * Gets current tab-id and stores it in a local DOM element.
+ */
 function setTabID() {
     try {
         if (tabID !== "") {
@@ -33,6 +37,10 @@ function setTabID() {
 }
 
 
+/**
+ * Listens for a message from the background containing the current tab-id.
+ * The id is stored in the global tabID variable.
+ */
 function listenToBackground() {
     chrome.runtime.onMessage.addListener(function(request) {
         tabID = request.urlChange;
@@ -40,6 +48,10 @@ function listenToBackground() {
 }
 
 
+/**
+ * Injects extension files into created script-tags in the current DOM-head.
+ * Sets also up the extensions error handling.
+ */
 function setupExtenstionInDOM() {
     try {
         if (checkURLForChange()) {
@@ -49,14 +61,15 @@ function setupExtenstionInDOM() {
             if (checkURLForVideo()) {
                 let possibleOptions = ["replayButton", "skipAds", "speedupAutoplay", "preventAutostop", "utensils", "mainDOM"];
                 possibleOptions.forEach(async function(currentEntry) {
-                    let result = currentEntry === "utensils" ? "true" : await getFromDB(currentEntry);
+
+                    let result = currentEntry === "utensils" ? "true" : await getDataFromBackground(currentEntry);
 
                     if (result === "true") {
-                        $('script').each(function () {
+                        $('script').each(function() {
                             if (this.src.includes(currentEntry)) {
                                 this.parentNode.removeChild(this);
                             }
-                        })
+                        });
 
                         let scriptTag = document.createElement("script");
                         scriptTag.src = chrome.runtime.getURL("js/" + currentEntry + ".js");
@@ -71,19 +84,11 @@ function setupExtenstionInDOM() {
 }
 
 
-function getFunctionalityList() {
-    return new Promise(
-        function(resolve) {
-
-            console.log(activeFunctionality[1])
-            resolve(activeFunctionality);
-        }
-    );
-}
-
-// Checks if the current page URL is different from the last time this function was called.
-// @return true if the oldURL and the currentURL are different, else false.
-var oldURL = "";
+/**
+ * Checks if the current page URL is different from the last time this function was called.
+ * The previous page URL is stored in the local variable oldURL.
+ * @returns {boolean}
+ */
 function checkURLForChange() {
     let currentURL = document.URL;
     if (currentURL !== oldURL) {

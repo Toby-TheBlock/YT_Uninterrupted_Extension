@@ -1,6 +1,12 @@
 
 var occuredErrorsReset = true;
 
+
+/**
+ * Resets the error counter for each new webpage,
+ * and checks how many errors have occured on the current on.
+ * If the max amount of allowed errors has been exceeded, alert the user.
+ */
 function errorManagement() {
     if (occuredErrorsReset) {
         resetErrorCount();
@@ -11,11 +17,11 @@ function errorManagement() {
     }
 }
 
-function resetErrorCount() {
-    localStorage.setItem("occurredErrors", "0");
-    occuredErrorsReset = false;
-}
 
+/**
+ * Creates a popup messagebox on the current page,
+ * which informes the user that something is wrong.
+ */
 function createErrorMSGBox() {
     if (typeof getDOMElement("class", "errorPopupContainer") === "undefined") {
         let popupContainer = createDOMElement("div", ["class"], ["errorPopupContainer"]);
@@ -41,6 +47,13 @@ function createErrorMSGBox() {
         document.body.appendChild(popupContainer);
     }
 }
+
+
+function resetErrorCount() {
+    localStorage.setItem("occurredErrors", "0");
+    occuredErrorsReset = false;
+}
+
 
 function removeErrorMSGBox() {
     getDOMElement("class", "errorPopupContainer").remove();

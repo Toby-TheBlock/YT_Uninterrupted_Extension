@@ -18,7 +18,7 @@
         "storage"
   ],
   "background": {
-  		"scripts": ["js/jquery3-2-1.js", "js/background.js"]
+  		"scripts": ["js/jquery3-2-1.js", "js/dbManagement.js", "js/background.js"]
   },
   "content_scripts": [
         {

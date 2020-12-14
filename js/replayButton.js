@@ -7,14 +7,14 @@ function createReplayButton() {
     let replayButton = createDOMElement("button", ["id"], ["ytuReplayButton"]);
     replayButton.addEventListener("click", setReplayStatus);
 
-    readyYTContextMenu();
+    readyYTContextmenu();
 
     let currentStorageValue = localStorage.getItem(getVideoURL());
     if (currentStorageValue === null || currentStorageValue === "false") {
         replayButton.classList.add("ytuReplayButton");
     } else {
         replayButton.classList.add("ytuReplayButtonOn");
-        setYTContextMenuReplayStatus();
+        setYTContextmenuReplayStatus();
     }
 
     let replayButtonIcon = document.createTextNode("↻");
@@ -80,13 +80,13 @@ function setReplayStatus() {
         replayButton.add("ytuReplayButtonOn");
         setLocalStorageValue(getVideoURL(), "true");
         manageAllIntervals(false);
-        setYTContextMenuReplayStatus();
+        setYTContextmenuReplayStatus();
 
     } else if (getReplayBtnStatus()) {
         replayButton.remove("ytuReplayButtonOn");
         setLocalStorageValue(getVideoURL(), "false");
         manageAllIntervals(true);
-        setYTContextMenuReplayStatus();
+        setYTContextmenuReplayStatus();
     }
 }
 
@@ -105,10 +105,11 @@ function getReplayBtnStatus() {
 
 
 /**
- *
+ * Enables the hidden contextmenu which normally appears on a right-click on the main video-player,
+ * to unsure that all of it's HTML-code is loaded into the DOM.
  * @returns {Promise<void>}
  */
-async function readyYTContextMenu() {
+async function readyYTContextmenu() {
     let fullScreenAd = getDOMElement("class", "ytp-ad-preview-container");
 
     if (fullScreenAd != null || typeof fullScreenAd != "undefined") {
@@ -126,11 +127,15 @@ async function readyYTContextMenu() {
 
         document.querySelectorAll('[role="menuitemcheckbox"]')[0].setAttribute("style", "display: none;");
     } catch {
-        readyYTContextMenu();
+        readyYTContextmenu();
     }
 }
 
-function setYTContextMenuReplayStatus() {
+
+/**
+ * Activates or disables the repeat-option in the hidden contextmenu based on the replay-button status.
+ */
+function setYTContextmenuReplayStatus() {
     if (getDOMElement("class", "ytp-menuitem").getAttribute("aria-checked") != getReplayBtnStatus()) {
         document.querySelectorAll('[role="menuitemcheckbox"]')[0].click();
     }
