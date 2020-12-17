@@ -1,3 +1,7 @@
+/* © Copyright 2020, Tobias Günther, All rights reserved. */
+
+
+// NEED TO HAVE A LOOK AT MAXIMUM CALL STACK SIZE ISSUE WHICH OCCURSE WHEN reportError() IS CALLED TO MANY TIMES!!!!
 
 var occuredErrorsReset = true;
 

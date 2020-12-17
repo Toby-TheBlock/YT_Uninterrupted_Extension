@@ -1,3 +1,4 @@
+/* © Copyright 2020, Tobias Günther, All rights reserved. */
 
 /**
  * Gets a short version of the page-URL which doesn't include query-parameters and such,

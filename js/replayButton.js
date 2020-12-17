@@ -1,3 +1,4 @@
+/* © Copyright 2020, Tobias Günther, All rights reserved. */
 
 /**
  * Creates a dedicated replay-button, sets it's intial state, and inserts it to the video-controlbar.
