@@ -1,3 +1,4 @@
+/* © Copyright 2020, Tobias Günther, All rights reserved. */
 
 prepareSliders();
 

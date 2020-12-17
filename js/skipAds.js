@@ -1,3 +1,4 @@
+/* © Copyright 2020, Tobias Günther, All rights reserved. */
 
 var fullscreenAdMutator;
 
@@ -12,7 +13,6 @@ function skipAds() {
     // Check if the ad is a banner or a skippable video, and act accordingly.
     if (adBanner != null && typeof adBanner != "undefined"){
         adBanner.remove();
-        //document.getElementsByClassName('ytp-ad-overlay-close-button')[0].click();
         console.log('Ad Banner closed!');
     }
     else if (fullscreenAdMutator == null) {

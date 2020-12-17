@@ -1,3 +1,4 @@
+/* © Copyright 2020, Tobias Günther, All rights reserved. */
 
 /**
  * Sends a message to the extension frontend containing the tab id of the tab which was updated.
