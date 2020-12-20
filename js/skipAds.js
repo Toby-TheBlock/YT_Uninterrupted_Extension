@@ -21,24 +21,6 @@ function skipAds() {
 }
 
 
-/**
- * A promise which resolves automatically once a fullscreen ad has finished.
- * @returns {Promise<unknown>}
- */
-function waitForFullscreenAd() {
-    return new Promise(
-        function(resolve) {
-            let rawTime = getDOMElement("class", "ytp-time-duration").innerHTML.split(":");
-            let timeToWait = parseInt(rawTime[0])*60000 + parseInt(rawTime[1])*1000 + 1000
-
-            setTimeout(function (){
-                resolve();
-            },timeToWait);
-        }
-    );
-}
-
-
 async function detectFullscreenAd(mutations) {
     for (let mutation of mutations) {
         if (mutation.type === "childList") {

@@ -30,9 +30,11 @@
     right: 15px;
     width: 430px;
     height: 80px;
+    color: #a6a6a3;
     border-radius: 5px;
-    background-color: white;
-    box-shadow: 0 0 5px black;
+    border: 0.1px solid #a6a6a3;
+    background-color: #101010;
+    box-shadow: 0 0 3px #a6a6a3;
     z-index: 10000;
 }
 
@@ -52,12 +54,14 @@
     top: 0px;
     width: 40px;
     height: 80px;
+    color: #ffffff;
+    background-color: #E62117;
     border-radius: 0 5px 5px 0px;
-    box-shadow: 0 0 2px black;
+    box-shadow: 0 0 2px #a6a6a3;
 }
 
 .closeBtnWrapper:hover {
-    background-color: #b4b4b4;
+    background-color: #8a130d;
 }
 
 .closeBtn {
