@@ -93,12 +93,16 @@ function setLocalStorageValue(storageIndex, value) {
 /**
  * Increases the countervalue stored in a localStorage by one,
  * as long as the localStorage hasn't been locked to incrementation.
+ * @returns {boolean}
  */
 function reportError() {
-    if (parseInt(localStorage.getItem("occurredErrors")) >= 0) {
+    let currentErrors = parseInt(localStorage.getItem("occurredErrors"));
+    if (currentErrors >= 0 && currentErrors <= 99) {
         let occurredErrors = parseInt(localStorage.getItem("occurredErrors")) + 1;
         localStorage.setItem("occurredErrors", occurredErrors.toString());
+        return true;
     }
+    return false;
 }
 
 
@@ -120,44 +124,46 @@ function getDataFromBackground(id) {
 }
 
 
+/**
+ * Checks if the current page URL is different from the last time this function was called.
+ * This function works differently based on its caller. If called from the extension code the try part will run.
+ * As the extension stores the previous page URL in the local variable "oldURL". This variable is obviously not
+ * available for the injected DOM code, and therefore the catch block will run in that case.
+ * Here the previous page URL is stored in a localStorage entry.
+ * @returns {boolean}
+ */
+function checkURLForChange() {
+    let currentURL = getVideoURL();
+
+    try {
+        if (currentURL !== oldURL) {
+            oldURL = currentURL;
+            return true;
+        }
+
+        return false;
+
+    } catch {
+        try {
+            let currentTabID = getDOMElement("id", "TabID").innerHTML;
+            let oldURL = localStorage.getItem("oldURLForTab" + currentTabID)
+            if (currentURL !== oldURL) {
+                deleteLocalStorage(oldURL);
+                localStorage.setItem("oldURLForTab" + currentTabID, currentURL);
+                return true;
+            }
+
+            return false;
+
+        } catch {
+            return false;
+        }
+    }
+}
+
+
 function createMutator(callbackFunction, objectToObserve) {
     const observer = new MutationObserver(callbackFunction);
     observer.observe(objectToObserve, {attributes: true, childList: true});
     return observer;
 }
-
-/* LOOK AT THIS AT A LATER POINT
-
-// Checks if the current page URL is different from the last time this function was called.
-// @return true if the oldURL and the currentURL are different, else false.
-function checkURLForChange() {
-    try {
-
-        let currentURL = getVideoURL();
-        let previousURL = "";
-
-        let caller = checkURLForChange.caller;
-
-        if (caller === setupExtenstionInDOM) {
-            previousURL = oldURL;
-        } else {
-            previousURL = getLocalStorageValue("oldURLForTab" + getDOMElement("id", "TabID").innerHTML);
-        }
-
-        if (currentURL !== previousURL) {
-            if (caller === setupExtenstionInDOM) {
-                oldURL = currentURL;
-            } else {
-                deleteLocalStorage(previousURL);
-                localStorage.setItem("oldURLForTab" + getDOMElement("id", "TabID").innerHTML, currentURL);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    } catch {
-        return false;
-    }
-}
-
-*/

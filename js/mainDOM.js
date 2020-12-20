@@ -62,8 +62,9 @@ function setupIntervals() {
 
             manageAllIntervals(true);
         } catch {
-            reportError();
-            setupIntervals();
+            if (reportError()) {
+                setupIntervals();
+            }
         }
     }
 }
@@ -135,27 +136,5 @@ function checkIfVideoIsPlaying(mutations) {
     }
 }
 
-
-/**
- * Checks if the current page URL is different from the last time this function was called.
- * The previous page URL is stored in a tab specific localStorage.
- * @returns {boolean}
- */
-function checkURLForChange() {
-    try {
-        let currentTabID = getDOMElement("id", "TabID").innerHTML;
-        let currentURL = getVideoURL();
-        let oldURL = localStorage.getItem("oldURLForTab" + currentTabID)
-        if (currentURL !== oldURL) {
-            deleteLocalStorage(oldURL);
-            localStorage.setItem("oldURLForTab" + currentTabID, currentURL);
-            return true;
-        } else {
-            return false;
-        }
-    } catch {
-        return false;
-    }
-}
 
 

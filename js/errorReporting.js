@@ -1,21 +1,22 @@
 /* © Copyright 2020, Tobias Günther, All rights reserved. */
 
-
-// NEED TO HAVE A LOOK AT MAXIMUM CALL STACK SIZE ISSUE WHICH OCCURSE WHEN reportError() IS CALLED TO MANY TIMES!!!!
-
 var occuredErrorsReset = true;
 
 
 /**
- * Resets the error counter for each new webpage,
+ * Resets the error counter for each new page,
  * and checks how many errors have occured on the current on.
  * If the max amount of allowed errors has been exceeded, alert the user.
  */
 function errorManagement() {
     if (occuredErrorsReset) {
+        let errorMSGBox = getDOMElement("class", "errorPopupContainer");
+        if (typeof errorMSGBox !== "undefined" && errorMSGBox !== null) {
+            removeErrorMSGBox();
+        }
         resetErrorCount();
     } else {
-        if (parseInt(localStorage.getItem("occurredErrors")) === 10) {
+        if (parseInt(localStorage.getItem("occurredErrors")) === 100) {
             createErrorMSGBox();
         }
     }

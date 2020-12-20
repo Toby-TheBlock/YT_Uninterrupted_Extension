@@ -86,21 +86,6 @@ function setupExtenstionInDOM() {
 
 
 /**
- * Checks if the current page URL is different from the last time this function was called.
- * The previous page URL is stored in the local variable oldURL.
- * @returns {boolean}
- */
-function checkURLForChange() {
-    let currentURL = document.URL;
-    if (currentURL !== oldURL) {
-        oldURL = currentURL;
-        return true;
-    }
-    return false;
-}
-
-
-/**
  * Checks if someone is logged in with an google account on the current page.
  * If not create an interval for preventLoginPopup().
  */
