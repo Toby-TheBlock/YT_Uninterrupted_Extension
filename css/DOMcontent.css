@@ -1,0 +1,72 @@
+.ytuReplayButton {
+    width: 20px;
+    height: 20px;
+    font-size: 195%;
+    font-weight: normal;
+    border: none;
+    background: none;
+    display: inline-block;
+    margin-left: 7px;
+    margin-right: 1px;
+    margin-top: 5px;
+    cursor: pointer;
+    transform: rotate(90deg);
+    color: #ffffff;
+    outline: none;
+}
+
+.ytuReplayButtonOn {
+    color: #E62117 !important;
+}
+
+.ytuReplayButtonFullScreen {
+    margin-left: 20px !important;
+    margin-top: 7px !important;
+}
+
+.errorPopupContainer {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 430px;
+    height: 80px;
+    color: #a6a6a3;
+    border-radius: 5px;
+    border: 0.1px solid #a6a6a3;
+    background-color: #101010;
+    box-shadow: 0 0 3px #a6a6a3;
+    z-index: 10000;
+}
+
+.errorPopupContent {
+    text-align: center;
+    margin-left: 5px;
+    padding: 10px;
+    line-height: 20px;
+    font-size: 150%;
+    max-width: 360px;
+}
+
+.closeBtnWrapper {
+    cursor: pointer;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 40px;
+    height: 80px;
+    color: #ffffff;
+    background-color: #E62117;
+    border-radius: 0 5px 5px 0px;
+    box-shadow: 0 0 2px #a6a6a3;
+}
+
+.closeBtnWrapper:hover {
+    background-color: #8a130d;
+}
+
+.closeBtn {
+    font-size: 200%;
+    position: relative;
+    right: 3px;
+    top: 20px;
+}
