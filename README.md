@@ -1,4 +1,4 @@
-# YT_Uninterrupted_Extension
+# YouTube Uninterrupted Extension
 
 A Chrome extension (Firefox support will most likely be added in the future) which adds extra functionality to YouTube. 
 The following things are being added to YouTube.
