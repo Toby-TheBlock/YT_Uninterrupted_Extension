@@ -13,8 +13,8 @@
   },
   
   "permissions": [
-    	"activeTab", "*://*/*",
-    	"tabs", "*://*/*",
+    	"https://www.youtube.com/*",
+    	"tabs",
         "storage"
   ],
   "background": {
