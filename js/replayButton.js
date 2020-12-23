@@ -7,16 +7,7 @@
 function createReplayButton() {
     let replayButton = createDOMElement("button", ["id"], ["ytuReplayButton"]);
     replayButton.addEventListener("click", setReplayStatus);
-
-    readyYTContextmenu();
-
-    let currentStorageValue = localStorage.getItem(getVideoURL());
-    if (currentStorageValue === null || currentStorageValue === "false") {
-        replayButton.classList.add("ytuReplayButton");
-    } else {
-        replayButton.classList.add("ytuReplayButtonOn");
-        setYTContextmenuReplayStatus();
-    }
+    replayButton.classList.add("ytuReplayButton");
 
     let replayButtonIcon = document.createTextNode("↻");
     replayButtonIcon.id = "ytuReplayButtonIcon";
@@ -27,11 +18,25 @@ function createReplayButton() {
 
     createMutator(detectFullscreen, getDOMElement("class", "html5-video-player"));
 
+    let currentStorageValue = localStorage.getItem(getVideoURL());
+    let clickOnce = false;
+    if (currentStorageValue === "true") {
+        replayButton.classList.add("ytuReplayButtonOn");
+        clickOnce = true;
+    }
+
+    setTimeout(async function() {
+        await checkForFullscreenAd();
+        readyYTContextmenu();
+        if (clickOnce) {
+            setYTContextmenuReplayStatus();
+        }
+    }, 1000);
 }
 
 
 /**
- * Looks for changes in the attributes of the specififed element (in this case the main video-player).
+ * Looks for changes in the attributes of the specified element (in this case the main video-player).
  * @param mutations - mutations which are to be monitored.
  */
 function detectFullscreen(mutations) {
@@ -73,27 +78,27 @@ function resetReplayButton(){
  * Sets the replay-button status to either "on" (true) or "off" (false), based on it's current state.
  * Also activates/clears all background intervals which are being used.
  */
-function setReplayStatus() {
+async function setReplayStatus() {
     let replayButton = getDOMElement("id", "ytuReplayButton").classList;
-    let toggleButton = getDOMElement("id", "toggleButton");
 
     if (!getReplayBtnStatus()) {
         replayButton.add("ytuReplayButtonOn");
-        setLocalStorageValue(getVideoURL(), "true");
+        await setLocalStorageValue(getVideoURL(), "true");
         manageAllIntervals(false);
 
         // These two function need to be included in both of the if statments because of "tab-bleeding".
         // Meaning that the the setReplayStatus called in one tab also runs in all the other idling tabs.
-        checkForFullscreenAd();
+        await checkForFullscreenAd();
         setYTContextmenuReplayStatus();
+        console.log("on")
 
     } else if (getReplayBtnStatus()) {
         replayButton.remove("ytuReplayButtonOn");
-        setLocalStorageValue(getVideoURL(), "false");
+        await setLocalStorageValue(getVideoURL(), "false");
         manageAllIntervals(true);
 
         // Duplicate code
-        checkForFullscreenAd();
+        await checkForFullscreenAd();
         setYTContextmenuReplayStatus();
     }
 }
@@ -104,23 +109,15 @@ function setReplayStatus() {
  * @returns {boolean}
  */
 function getReplayBtnStatus() {
-    if (getDOMElement("id", "ytuReplayButton").classList.contains("ytuReplayButtonOn")) {
-        return true;
-    }
-
-    return false;
+    return getDOMElement("id", "ytuReplayButton").classList.contains("ytuReplayButtonOn");
 }
 
 
 /**
  * Enables the hidden contextmenu which normally appears on a right-click on the main video-player,
  * to unsure that all of it's HTML-code is loaded into the DOM.
- * @returns {Promise<void>}
  */
 function readyYTContextmenu() {
-
-    checkForFullscreenAd();
-
     try {
         getDOMElement("class", "video-stream").dispatchEvent(new MouseEvent("contextmenu", {
             bubbles: true,
@@ -131,6 +128,7 @@ function readyYTContextmenu() {
         }));
 
         document.querySelectorAll('[role="menuitemcheckbox"]')[0].setAttribute("style", "display: none;");
+        console.log("setup")
     } catch {
         readyYTContextmenu();
     }
@@ -141,7 +139,7 @@ function readyYTContextmenu() {
  * Activates or disables the repeat-option in the hidden contextmenu based on the replay-button status.
  */
 function setYTContextmenuReplayStatus() {
-    if (getDOMElement("class", "ytp-menuitem").getAttribute("aria-checked") != getReplayBtnStatus()) {
+    if (getDOMElement("class", "ytp-menuitem").getAttribute("aria-checked") !== getReplayBtnStatus()) {
         document.querySelectorAll('[role="menuitemcheckbox"]')[0].click();
     }
 }
@@ -151,28 +149,22 @@ function setYTContextmenuReplayStatus() {
  * Checks if there is currently a fullscreen ad playing, if so wait for it to finish.
  * @returns {Promise<void>}
  */
-async function checkForFullscreenAd() {
-    let fullScreenAd = getDOMElement("class", "ytp-ad-preview-container");
-
-    if (fullScreenAd != null || typeof fullScreenAd != "undefined") {
-        await waitForFullscreenAd();
-    }
-}
-
-
-/**
- * A promise which resolves automatically once a fullscreen ad has finished.
- * @returns {Promise<unknown>}
- */
-function waitForFullscreenAd() {
+function checkForFullscreenAd() {
     return new Promise(
         function(resolve) {
-            let rawTime = getDOMElement("class", "ytp-time-duration").innerHTML.split(":");
-            let timeToWait = parseInt(rawTime[0])*60000 + parseInt(rawTime[1])*1000 + 1000;
+            let fullScreenAd = getDOMElement("class", "ytp-ad-preview-container");
 
-            setTimeout(function (){
-                resolve();
-            },timeToWait);
+            if (fullScreenAd != null || typeof fullScreenAd != "undefined") {
+                let rawTime = getDOMElement("class", "ytp-time-duration").innerHTML.split(":");
+                let timeToWait = parseInt(rawTime[0])*60000 + parseInt(rawTime[1])*1000 + 10000;
+
+                setTimeout(function (){
+                    console.log("trying now!");
+                    resolve();
+                },timeToWait);
+            }
+
+            resolve();
         }
     );
 }

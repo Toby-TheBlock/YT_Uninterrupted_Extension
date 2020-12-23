@@ -13,7 +13,6 @@ function skipAds() {
     // Check if the ad is a banner or a skippable video, and act accordingly.
     if (adBanner != null && typeof adBanner != "undefined"){
         adBanner.remove();
-        console.log('Ad Banner closed!');
     }
     else if (fullscreenAdMutator == null) {
         fullscreenAdMutator = createMutator(detectFullscreenAd, getDOMElement("class", "html5-video-player"));
@@ -41,7 +40,6 @@ function skipFullscreenAd() {
                 if (skipButton != null && typeof skipButton != "undefined") {
                     skipButton.click();
                 }
-                //getDOMElement("class", "video-ads ytp-ad-module").remove();
                 resolve();
             }, 1000);
         }
