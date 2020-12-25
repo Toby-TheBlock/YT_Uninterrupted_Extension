@@ -1,6 +1,6 @@
 /* © Copyright 2020, Tobias Günther, All rights reserved. */
 
-window.setInterval(setupExtenstionInDOM, 1);
+window.setInterval(setupExtensionInDOM, 1);
 
 var notLoggedIn;
 checkIfLoggedIn();
@@ -53,10 +53,10 @@ function listenToBackground() {
  * Injects extension files into created script-tags in the current DOM-head.
  * Sets also up the extensions error handling.
  */
-function setupExtenstionInDOM() {
+function setupExtensionInDOM() {
     try {
         if (checkURLForChange()) {
-            occuredErrorsReset = true;
+            occurredErrorsReset = true;
             window.setInterval(errorManagement, 500);
 
             if (checkURLForVideo()) {

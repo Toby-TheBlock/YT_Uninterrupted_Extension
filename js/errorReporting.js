@@ -1,15 +1,15 @@
 /* © Copyright 2020, Tobias Günther, All rights reserved. */
 
-var occuredErrorsReset = true;
+var occurredErrorsReset = true;
 
 
 /**
  * Resets the error counter for each new page,
- * and checks how many errors have occured on the current on.
+ * and checks how many errors have occurred on the current on.
  * If the max amount of allowed errors has been exceeded, alert the user.
  */
 function errorManagement() {
-    if (occuredErrorsReset) {
+    if (occurredErrorsReset) {
         let errorMSGBox = getDOMElement("class", "errorPopupContainer");
         if (typeof errorMSGBox !== "undefined" && errorMSGBox !== null) {
             removeErrorMSGBox();
@@ -25,16 +25,16 @@ function errorManagement() {
 
 /**
  * Creates a popup messagebox on the current page,
- * which informes the user that something is wrong.
+ * which informs the user that something is wrong.
  */
 function createErrorMSGBox() {
     if (typeof getDOMElement("class", "errorPopupContainer") === "undefined") {
         let popupContainer = createDOMElement("div", ["class"], ["errorPopupContainer"]);
 
         let errorMsg = createDOMElement("p", ["class"], ["errorPopupContent"]);
-        let errorTxt = ["An error occured setting up the YT-uninterrupted. :(",
+        let errorTxt = ["An error occurred setting up the YT-uninterrupted. :(",
             "Reloading the page will most likely solve this issue.",
-            "If the error still presists try restarting the web-browser."];
+            "If the error still persists try restarting the web-browser."];
         for (var i=0; i < errorTxt.length; i++) {
             errorMsg.appendChild(document.createTextNode(errorTxt[i]));
             errorMsg.appendChild(document.createElement("br"));
@@ -56,7 +56,7 @@ function createErrorMSGBox() {
 
 function resetErrorCount() {
     localStorage.setItem("occurredErrors", "0");
-    occuredErrorsReset = false;
+    occurredErrorsReset = false;
 }
 
 

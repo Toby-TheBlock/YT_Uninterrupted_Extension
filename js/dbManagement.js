@@ -1,7 +1,7 @@
 /* © Copyright 2020, Tobias Günther, All rights reserved. */
 
 /**
- * Creates an objectstore and filles it with default data.
+ * Creates an objectstore and fills it with default data.
  * @param event
  */
 function configureDB(event) {

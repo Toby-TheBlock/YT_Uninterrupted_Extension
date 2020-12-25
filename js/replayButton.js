@@ -1,7 +1,7 @@
 /* © Copyright 2020, Tobias Günther, All rights reserved. */
 
 /**
- * Creates a dedicated replay-button, sets it's intial state, and inserts it to the video-controlbar.
+ * Creates a dedicated replay-button, sets it's initial state, and inserts it to the video-control bar.
  * Also initialises/sets up all of the functionality for the replay-button.
  */
 function createReplayButton() {
@@ -91,7 +91,7 @@ async function setReplayStatus() {
         await setLocalStorageValue(getVideoURL(), "true");
         manageAllIntervals(false);
 
-        // These two function need to be included in both of the if statments because of "tab-bleeding".
+        // These two function need to be included in both of the if statements because of "tab-bleeding".
         // Meaning that the the setReplayStatus called in one tab also runs in all the other idling tabs.
         waitTime = await checkForFullscreenAd();
         setTimeout(function() {
@@ -153,8 +153,8 @@ function setYTContextmenuReplayStatus() {
 
 
 /**
- * Checks if there is currently a fullscreen ad playing, and returnes its duration time.
- * Returnes 0 if no ad is playing.
+ * Checks if there is currently a fullscreen ad playing, and returns its duration time.
+ * Returns 0 if no ad is playing.
  * @returns {Promise<void>}
  */
 function checkForFullscreenAd() {

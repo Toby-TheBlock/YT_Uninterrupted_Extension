@@ -1,7 +1,7 @@
 /* © Copyright 2020, Tobias Günther, All rights reserved. */
 
 /**
- * Closes the autostop dialogbox and all other dialog options once they appear,
+ * Closes the autostop dialog box and all other dialog options once they appear,
  * and then ensures that the video is being resumed.
  */
 function preventAutostop() {
@@ -18,8 +18,8 @@ function preventAutostop() {
 
         /**
          * The page needs to be reloaded since Youtube won't continue to play the video,
-         * even if the dialogbox asking to resume is being pressed. Therefor a reload is nessesary.
-         * The delay ensures that YouTube has registered the closing of the autostop dialogbox
+         * even if the dialog box asking to resume is being pressed. Therefore a reload is necessary.
+         * The delay ensures that YouTube has registered the closing of the autostop dialog box
          * before the page is being reloaded.
          */
         setTimeout(function() {

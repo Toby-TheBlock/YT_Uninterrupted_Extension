@@ -2,7 +2,7 @@
 
 /**
  * Gets a short version of the page-URL which doesn't include query-parameters and such,
- * as they somethimes change while a video is playing which cause trouble in regards to resetting things.
+ * as they sometimes change while a video is playing which cause trouble in regards to resetting things.
  * @returns {string}
  */
 function getVideoURL() {
@@ -13,13 +13,13 @@ function getVideoURL() {
 /**
  * Shorthand function for creating a new DOM element.
  * @param elementType - string which defines the elements type
- * @param elementattribute - list of attributes which are to be assign to the element.
+ * @param elementAttribute - list of attributes which are to be assign to the element.
  * @param value - list over the value to be assigned to the attributes.
  * @returns {HTMLElement}
  */
-function createDOMElement(elementType, elementattribute, value) {
+function createDOMElement(elementType, elementAttribute, value) {
     let element = document.createElement("" + elementType + "");
-    elementattribute.forEach(function(currentVal, index) {
+    elementAttribute.forEach(function(currentVal, index) {
         element.setAttribute(currentVal, value[index]);
     });
 
@@ -30,21 +30,21 @@ function createDOMElement(elementType, elementattribute, value) {
 /**
  * Shorthand function for retrieving a DOM element.
  * @param retrievalMethod - string which defines the elements type who's to be retrieved.
- * @param identificator - the id, class- or tag-name of the element.
+ * @param identifier - the id, class- or tag-name of the element.
  * @param index - index of the HTML-collection element which is to be retrieved.
  * @returns {Element}
  */
-function getDOMElement(retrievalMethod, identificator, index = 0) {
+function getDOMElement(retrievalMethod, identifier, index = 0) {
     let object;
     switch (retrievalMethod) {
         case "id":
-            object = document.getElementById("" + identificator + "");
+            object = document.getElementById("" + identifier + "");
             break;
         case "class":
-            object = document.getElementsByClassName(identificator)[index];
+            object = document.getElementsByClassName(identifier)[index];
             break;
         case "tag":
-            object = document.getElementsByTagName(identificator)[index];
+            object = document.getElementsByTagName(identifier)[index];
             break;
     }
 
@@ -70,7 +70,7 @@ function deleteLocalStorage(storageIndex) {
 
 
 /**
- * Updates a localStorage value, if the value is either true/false the opppsite value is being stored.
+ * Updates a localStorage value, if the value is either true/false the opposite value is being stored.
  * @param storageIndex
  * @param value
  */
@@ -96,7 +96,7 @@ function setLocalStorageValue(storageIndex, value) {
 
 
 /**
- * Increases the countervalue stored in a localStorage by one,
+ * Increases the counter value stored in a localStorage by one,
  * as long as the localStorage hasn't been locked to incrementation.
  * @returns {boolean}
  */
