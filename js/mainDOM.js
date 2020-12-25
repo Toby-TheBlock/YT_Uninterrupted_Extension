@@ -14,7 +14,7 @@ setTimeout(
 
 /**
  * Checks which functionality is enabled, and sets up the activeFunctionality Map accordingly.
- * The check is performed by looking for the extentions injected script-tags in the DOM-head.
+ * The check is performed by looking for the extensions injected script-tags in the DOM-head.
  */
 function selectFunctionality() {
     availableFunctionality.forEach(function(currentEntry) {
@@ -88,7 +88,7 @@ function manageAllIntervals(status) {
 
 /**
  * Either sets or clears a specified interval inn the activeFunctionality map.
- * @param intervalId - name of the functionality whos interval needs changing.
+ * @param intervalId - name of the functionality whose interval needs changing.
  * @param status - true = setup interval, false = clear interval.
  */
 function manageSingleInterval(intervalId, status) {
@@ -104,7 +104,7 @@ function manageSingleInterval(intervalId, status) {
 
 
 /**
- * Checks if the current pageload is due to the closure of a previously closed autostop dialogbox.
+ * Checks if the current page load is due to the closure of a previously closed autostop dialog box.
  * If the page has been reloaded due to the autostop, skip to the next video.
  */
 function checkIfAutoplayHasBeenStopped() {

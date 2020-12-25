@@ -1,6 +1,6 @@
 /* © Copyright 2020, Tobias Günther, All rights reserved. */
 
-window.setInterval(setupExtenstionInDOM, 1);
+window.setInterval(setupExtensionInDOM, 1);
 
 var notLoggedIn;
 checkIfLoggedIn();
@@ -13,7 +13,7 @@ var tabID = "";
 /**
  * Gets current tab-id and stores it in a local DOM element.
  */
-function setTabID() {
+async function setTabID() {
     try {
         if (tabID !== "") {
             if (document.getElementById("TabID") === null) {
@@ -24,7 +24,7 @@ function setTabID() {
                 (document.head || document.documentElement).appendChild(scriptTag);
 
                 if (localStorage.getItem("oldURLForTab" + tabID) === null) {
-                    setLocalStorageValue("oldURLForTab" + tabID, "noPreviousURL");
+                    await setLocalStorageValue("oldURLForTab" + tabID, "noPreviousURL");
                 }
             } else {
                 clearInterval(settingUpTabID);
@@ -53,10 +53,10 @@ function listenToBackground() {
  * Injects extension files into created script-tags in the current DOM-head.
  * Sets also up the extensions error handling.
  */
-function setupExtenstionInDOM() {
+function setupExtensionInDOM() {
     try {
         if (checkURLForChange()) {
-            occuredErrorsReset = true;
+            occurredErrorsReset = true;
             window.setInterval(errorManagement, 500);
 
             if (checkURLForVideo()) {
