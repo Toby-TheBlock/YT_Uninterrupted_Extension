@@ -26,11 +26,15 @@ function createReplayButton() {
     }
 
     setTimeout(async function() {
-        await checkForFullscreenAd();
-        readyYTContextmenu();
-        if (clickOnce) {
-            setYTContextmenuReplayStatus();
-        }
+        let waitTime = await checkForFullscreenAd();
+
+        setTimeout(function() {
+            readyYTContextmenu();
+
+            if (clickOnce) {
+                setYTContextmenuReplayStatus();
+            }
+        }, waitTime);
     }, 1000);
 }
 
@@ -80,6 +84,7 @@ function resetReplayButton(){
  */
 async function setReplayStatus() {
     let replayButton = getDOMElement("id", "ytuReplayButton").classList;
+    let waitTime = 0;
 
     if (!getReplayBtnStatus()) {
         replayButton.add("ytuReplayButtonOn");
@@ -88,9 +93,10 @@ async function setReplayStatus() {
 
         // These two function need to be included in both of the if statments because of "tab-bleeding".
         // Meaning that the the setReplayStatus called in one tab also runs in all the other idling tabs.
-        await checkForFullscreenAd();
-        setYTContextmenuReplayStatus();
-        console.log("on")
+        waitTime = await checkForFullscreenAd();
+        setTimeout(function() {
+            setYTContextmenuReplayStatus();
+        }, waitTime);
 
     } else if (getReplayBtnStatus()) {
         replayButton.remove("ytuReplayButtonOn");
@@ -98,8 +104,10 @@ async function setReplayStatus() {
         manageAllIntervals(true);
 
         // Duplicate code
-        await checkForFullscreenAd();
-        setYTContextmenuReplayStatus();
+        waitTime = await checkForFullscreenAd();
+        setTimeout(function() {
+            setYTContextmenuReplayStatus();
+        }, waitTime);
     }
 }
 
@@ -128,7 +136,6 @@ function readyYTContextmenu() {
         }));
 
         document.querySelectorAll('[role="menuitemcheckbox"]')[0].setAttribute("style", "display: none;");
-        console.log("setup")
     } catch {
         readyYTContextmenu();
     }
@@ -146,25 +153,23 @@ function setYTContextmenuReplayStatus() {
 
 
 /**
- * Checks if there is currently a fullscreen ad playing, if so wait for it to finish.
+ * Checks if there is currently a fullscreen ad playing, and returnes its duration time.
+ * Returnes 0 if no ad is playing.
  * @returns {Promise<void>}
  */
 function checkForFullscreenAd() {
     return new Promise(
         function(resolve) {
-            let fullScreenAd = getDOMElement("class", "ytp-ad-preview-container");
+            let fullScreenAd = getDOMElement("class", "ytp-ad-player-overlay-skip-or-preview");
 
             if (fullScreenAd != null || typeof fullScreenAd != "undefined") {
                 let rawTime = getDOMElement("class", "ytp-time-duration").innerHTML.split(":");
-                let timeToWait = parseInt(rawTime[0])*60000 + parseInt(rawTime[1])*1000 + 10000;
+                let timeToWait = parseInt(rawTime[0])*60000 + parseInt(rawTime[1])*1000 + 1000;
 
-                setTimeout(function (){
-                    console.log("trying now!");
-                    resolve();
-                },timeToWait);
+                resolve(timeToWait);
             }
 
-            resolve();
+            resolve(0);
         }
     );
 }
