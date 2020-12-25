@@ -13,7 +13,7 @@ var tabID = "";
 /**
  * Gets current tab-id and stores it in a local DOM element.
  */
-function setTabID() {
+async function setTabID() {
     try {
         if (tabID !== "") {
             if (document.getElementById("TabID") === null) {
@@ -24,7 +24,7 @@ function setTabID() {
                 (document.head || document.documentElement).appendChild(scriptTag);
 
                 if (localStorage.getItem("oldURLForTab" + tabID) === null) {
-                    setLocalStorageValue("oldURLForTab" + tabID, "noPreviousURL");
+                    await setLocalStorageValue("oldURLForTab" + tabID, "noPreviousURL");
                 }
             } else {
                 clearInterval(settingUpTabID);

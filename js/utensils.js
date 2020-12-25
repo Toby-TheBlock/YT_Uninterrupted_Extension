@@ -75,18 +75,23 @@ function deleteLocalStorage(storageIndex) {
  * @param value
  */
 function setLocalStorageValue(storageIndex, value) {
-    let localData = localStorage.getItem(storageIndex);
-    switch (localData) {
-        case "true":
-            localStorage.setItem(storageIndex, "false");
-            break;
-        case "false":
-            localStorage.setItem(storageIndex, "true");
-            break;
-        default:
-            localStorage.setItem(storageIndex, value);
-            break;
-    }
+    return new Promise(
+        function(resolve) {
+            let localData = localStorage.getItem(storageIndex);
+            switch (localData) {
+                case "true":
+                    localStorage.setItem(storageIndex, "false");
+                    break;
+                case "false":
+                    localStorage.setItem(storageIndex, "true");
+                    break;
+                default:
+                    localStorage.setItem(storageIndex, value);
+                    break;
+            }
+            resolve();
+        }
+    );
 }
 
 
