@@ -9,7 +9,7 @@
   "browser_action": {
   		"default_popup": "html/main.html",
     	"default_icon": "assets/icon.png",
-		"default_title": "YouTube uninterrupted"
+		  "default_title": "YouTube uninterrupted"
   },
   
   "permissions": [
