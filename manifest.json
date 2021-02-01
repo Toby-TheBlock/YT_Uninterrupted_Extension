@@ -11,14 +11,11 @@
     	"default_icon": "assets/icon.png",
 		  "default_title": "YouTube uninterrupted"
   },
-  
-  "permissions": [
-    	"activeTab",
-    	"tabs"
-  ],
+
   "background": {
   		"scripts": ["js/jquery3-2-1.js", "js/dbManagement.js", "js/background.js"]
   },
+
   "content_scripts": [
         {
         "matches": ["https://www.youtube.com/*"],
@@ -26,6 +23,7 @@
         "js": ["js/jquery3-2-1.js", "js/dbManagement.js", "js/utensils.js", "js/errorReporting.js", "js/mainCS.js"]
         }
     ],
+
   "web_accessible_resources": [
     "assets/*.png",
     "js/*.js"

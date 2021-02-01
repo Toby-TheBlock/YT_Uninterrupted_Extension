@@ -137,7 +137,9 @@ function readyYTContextmenu() {
 
         document.querySelectorAll('[role="menuitemcheckbox"]')[0].setAttribute("style", "display: none;");
     } catch {
-        readyYTContextmenu();
+        if (reportError()) {
+            readyYTContextmenu();
+        }
     }
 }
 
@@ -146,9 +148,16 @@ function readyYTContextmenu() {
  * Activates or disables the repeat-option in the hidden contextmenu based on the replay-button status.
  */
 function setYTContextmenuReplayStatus() {
-    if (getDOMElement("class", "ytp-menuitem").getAttribute("aria-checked") !== getReplayBtnStatus()) {
-        document.querySelectorAll('[role="menuitemcheckbox"]')[0].click();
+    try {
+        if (getDOMElement("class", "ytp-menuitem").getAttribute("aria-checked") !== getReplayBtnStatus()) {
+            document.querySelectorAll('[role="menuitemcheckbox"]')[0].click();
+        }
+    } catch {
+        if (reportError()) {
+            setYTContextmenuReplayStatus();
+        }
     }
+
 }
 
 
