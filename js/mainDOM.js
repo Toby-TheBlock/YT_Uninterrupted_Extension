@@ -76,7 +76,7 @@ function setupIntervals() {
 function manageAllIntervals(status) {
     if (status) {
         for (let [key, intervalFunction] of activeFunctionality.entries()) {
-            activeIntervals.set(key, window.setInterval(intervalFunction, 100));
+            activeIntervals.set(key, window.setInterval(intervalFunction, 1));
         }
     } else {
         for (let interval of activeIntervals.values()) {
