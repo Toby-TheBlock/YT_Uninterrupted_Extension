@@ -1,8 +1,7 @@
-/* © Copyright 2020, Tobias Günther, All rights reserved. */
+/* © Copyright 2021, Tobias Günther, All rights reserved. */
 
 window.setInterval(setupExtensionInDOM, 1);
 
-var notLoggedIn;
 checkIfLoggedIn();
 
 var oldURL = "";
@@ -86,27 +85,28 @@ function setupExtensionInDOM() {
 
 
 /**
- * Checks if someone is logged in with an google account on the current page.
+ * Checks if someone is logged in with a Google-account on the current page.
  * If not create an interval for preventLoginPopup().
  */
 function checkIfLoggedIn() {
-    let avatarBtn  = getDOMElement("id", "avatar-btn");
-    if (typeof avatarBtn === "undefined" && avatarBtn === null) {
-        notLoggedIn = window.setInterval(preventLoginPopup, 500);
-    }
+    setTimeout(function() {
+        let avatarBtn  = getDOMElement("id", "avatar-btn");
+
+        if (typeof avatarBtn === "undefined" || avatarBtn === null) {
+            window.setInterval(preventLoginPopup, 10);
+        }
+    }, 100);
 }
 
 
 /**
  * Checks the DOM for the presence of the Login popup, and closes it if present.
- * Also clears the interval in the notLoggedIn variable.
  */
 function preventLoginPopup() {
     let noThxBtn = getDOMElement("class", "style-scope yt-button-renderer style-text size-small", 1);
-
+    
     if (typeof noThxBtn !== "undefined" && noThxBtn !== null) {
         noThxBtn.click();
-        clearInterval(notLoggedIn);
     }
 }
 
