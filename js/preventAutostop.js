@@ -1,4 +1,4 @@
-/* © Copyright 2020, Tobias Günther, All rights reserved. */
+/* © Copyright 2021, Tobias Günther, All rights reserved. */
 
 /**
  * Closes the autostop dialog box and all other dialog options once they appear,
