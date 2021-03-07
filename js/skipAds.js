@@ -1,4 +1,4 @@
-/* © Copyright 2020, Tobias Günther, All rights reserved. */
+/* © Copyright 2021, Tobias Günther, All rights reserved. */
 
 /**
  * Checks if either an banner or fullscreen Ad is currently playing, and closes it as soon as possible.
