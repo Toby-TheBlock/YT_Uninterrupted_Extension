@@ -3,7 +3,7 @@
 
   "name": "YouTube Uninterrupted",
   "description": "Ensures that YouTube runs without any interruptions",
-  "version": "1.4",
+  "version": "1.5",
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 
   "browser_action": {
