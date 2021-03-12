@@ -9,10 +9,10 @@ var nextUpPressed = false;
  */
 function playNextVideo() {
     if (checkURLForVideo()) {
-        let ytpStartNextVideo = getDOMElement("class", "ytp-upnext ytp-player-content ytp-suggestion-set");
-        if (ytpStartNextVideo != null && ytpStartNextVideo.style.display !== "none") {
+        let startNextVideoContainer = getDOMElement("class", "ytp-autonav-endscreen-button-container");
+        if (startNextVideoContainer != null && startNextVideoContainer.style.display !== "none") {
             if (!nextUpPressed) {
-                document.getElementsByClassName("ytp-upnext-autoplay-icon")[0].click();
+                getDOMElement("class", "ytp-autonav-endscreen-upnext-button ytp-autonav-endscreen-upnext-play-button").click();
                 nextUpPressed = true;
             }
         }
